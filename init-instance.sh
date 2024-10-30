@@ -12,6 +12,7 @@ sudo systemctl enable nginx
 curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt install -y nodejs
 sudo npm install -g express
+sudo npm install -g ws
 
 # Install opam (OCaml package manager)
 sudo apt install -y opam

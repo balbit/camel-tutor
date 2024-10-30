@@ -33,9 +33,12 @@ else
             html)
                 SYNC_HTML=true
                 ;;
+            server)
+                SYNC_SERVER=true
+                ;;
             *)
                 echo "Invalid option: $arg"
-                echo "Usage: $0 [ts] [css] [assets] [nginx] [html]"
+                echo "Usage: $0 [ts] [css] [assets] [nginx] [html] [server]"
                 exit 1
                 ;;
         esac
@@ -65,6 +68,13 @@ fi
 if [ "$SYNC_HTML" = true ]; then
     echo "Syncing HTML files to EC2..."
     rsync -avz -e "ssh -i camel-tutor-micro-key.pem" src/html/* ubuntu@3.128.118.239:/var/www/html/
+fi
+
+if [ "$SYNC_SERVER" = true ]; then
+    echo "Syncing server.js to EC2..."
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" server.js ubuntu@3.128.118.239:/home/ubuntu/
+    echo "Restarting server on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start server.js --name camel-tutor"
 fi
 
 # Sync NGINX configuration to EC2 and restart NGINX if SYNC_NGINX is true
