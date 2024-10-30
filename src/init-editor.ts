@@ -92,29 +92,20 @@ function loadMonacoEditor() {
 
 // Function to initialize editors in each specified section
 function initializeEditors(monaco: any) {
-    const sections = document.querySelectorAll<HTMLElement>("section.level2#variables");
+    const sections = document.querySelectorAll<HTMLElement>("div.highlight");
 
     sections.forEach((section, index) => {
-        // Create editor container
         const containerId = `editor-container-${index}`;
         section.id = containerId;
 
-        // Initialize EditorContainer with optional initial value
-        new EditorContainer(containerId, "(** Type your OCaml code here *)\nlet x = 42;;", monaco);
-        // const editorContainer = document.createElement("div");
-        // editorContainer.style.width = "100%";
-        // editorContainer.style.height = "200px";
-        // editorContainer.id = `ocaml-editor-${index}`;
-        // section.appendChild(editorContainer);
+        // Find the code block within the div.highlight
+        const codeBlock = section.querySelector("code.language-ocaml");
 
-        // // Initialize the Monaco editor in the container
-        // monaco.editor.create(editorContainer, {
-        //     value: "// Type your OCaml code here\nlet x = 42;",
-        //     language: "ocaml",
-        //     theme: "vs-light",
-        //     automaticLayout: true,
-        //     minimap: { enabled: false }
-        // });
+        // Get the code text content, or use a default if not found
+        const initialCode = codeBlock ? codeBlock.textContent || "(** No code found **)" : "(** No code found **)";
+
+        // Initialize EditorContainer with the extracted code
+        new EditorContainer(containerId, initialCode, monaco);
     });
 }
 
