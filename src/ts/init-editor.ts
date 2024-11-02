@@ -1,3 +1,5 @@
+import { extractRunnableCode } from "./extract-ocaml.js";
+
 interface OutputChecker {
     (output: string): boolean;
 }
@@ -102,7 +104,7 @@ function initializeEditors(monaco: any) {
         const codeBlock = section.querySelector("code.language-ocaml");
 
         // Get the code text content, or use a default if not found
-        const initialCode = codeBlock ? codeBlock.textContent || "(** No code found **)" : "(** No code found **)";
+        const initialCode = codeBlock ? extractRunnableCode(codeBlock.textContent ?? "(** No code found **)" ) : "(** No code found **)";
 
         // Initialize EditorContainer with the extracted code
         new EditorContainer(containerId, initialCode, monaco);
