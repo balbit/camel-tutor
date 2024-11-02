@@ -4,7 +4,7 @@
 npx tsc
 
 # Sync JavaScript files to NGINX static file directory
-sudo cp dist/*.js /usr/local/var/www/js/
+sudo cp dist/src/ts/*.js /usr/local/var/www/js/
 
 # Sync NGINX configuration
 sudo cp nginx.conf /opt/homebrew/etc/nginx/nginx.conf

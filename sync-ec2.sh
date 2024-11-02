@@ -50,7 +50,7 @@ if [ "$SYNC_TS" = true ]; then
     echo "Compiling TypeScript files..."
     npx tsc
     echo "Syncing JavaScript files to EC2..."
-    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" dist/*.js ubuntu@3.128.118.239:/var/www/html/js/
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" dist/src/ts/*.js ubuntu@3.128.118.239:/var/www/html/js/
 fi
 
 # Sync CSS files to EC2 if SYNC_CSS is true

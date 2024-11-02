@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsc || exit ; mocha --require ts-node/register dist/test",
     "start": "node server.js",
     "build": "tsc",
     "lint": "eslint 'src/**/*.{ts,tsx}' --fix"
@@ -12,11 +12,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/mocha": "^10.0.9",
     "@types/node": "^22.8.4",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
     "@typescript-eslint/parser": "^8.12.2",
     "eslint": "^9.13.0",
+    "jest": "^29.7.0",
+    "mocha": "^10.8.2",
+    "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
