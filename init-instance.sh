@@ -36,6 +36,13 @@ cat <<EOF > ~/.ocamlinit
 open Base;;
 EOF
 
+# Handle SSL certificate
+# Generate or upload certificates
+# sudo certbot -d camel.elliotliu.com --manual --preferred-challenges dns certonly
+
+# Cron job to renew SSL certificate
+echo "0 0,12 * * * root certbot renew --quiet" | sudo tee /etc/cron.d/certbot
+
 # Final check: display installed versions
 echo "NGINX Version:"
 nginx -v

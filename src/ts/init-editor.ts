@@ -54,7 +54,7 @@ class EditorContainer {
     private async submitCode(): Promise<void> {
         const code = this.editor?.getValue() || "";
         try {
-            const response = await fetch("http://3.128.118.239/run-code", {
+            const response = await fetch("https://camel.elliotliu.com/run-code", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code })
