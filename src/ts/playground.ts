@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Connect to WebSocket server
-    const socket = new WebSocket("ws://camel.elliotliu.com/playground/ws");
+    const socket = new WebSocket("wss://camel.elliotliu.com/playground/ws");
 
     // Display messages from the WebSocket server
     socket.addEventListener("message", function (event) {
