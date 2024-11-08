@@ -17,7 +17,7 @@ app.post("/run-code", (req, res) => {
     fs.writeFileSync("/tmp/code.ml", code);
 
     // Execute OCaml code once
-    exec(`echo "${code}" | utop`, (error, stdout, stderr) => {
+    exec(`echo ${JSON.stringify(code)} | utop`, (error, stdout, stderr) => {
         if (error || stderr) {
             return res.json({ output: stderr || error.message });
         }
