@@ -65,13 +65,21 @@ class EditorContainer {
 
             const result: RunCodeResponse = await response.json();
 
+            const escapeHtml = (str: string) => 
+                str.replace(/&/g, "&amp;")
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;");
+    
+            const escapedOutput = escapeHtml(result.output);
+    
             if (this.outputChecker && this.resultElement) {
                 const isCorrect = this.outputChecker(result.output);
                 this.resultElement.innerHTML = isCorrect
-                    ? `<span style="color: green;">Correct: ${result.output}</span>`
-                    : `<span style="color: red;">Incorrect: ${result.output}</span>`;
+                    ? `<span style="color: green;">Correct:</span><pre style="color: green;">${escapedOutput}</pre>`
+                    : `<span style="color: red;">Incorrect:</span><pre style="color: red;">${escapedOutput}</pre>`;
             } else if (this.resultElement) {
-                this.resultElement.innerHTML = `<pre>${result.output}</pre>`;
+                // Set the escaped output to avoid HTML interpretation
+                this.resultElement.innerHTML = `<pre>${escapedOutput}</pre>`;
             }
         } catch (error) {
             if (this.resultElement) {
