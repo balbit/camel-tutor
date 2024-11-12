@@ -57,6 +57,28 @@ async function getOrCreateContainer(sessionId) {
     return { container, execStream, inputStream };
 }
 
+function cleanOutput(output) {
+    const knownPatterns = ["val", "-", "module", "Warning", "Error"];
+    const lines = output.split("\n");
+
+    const cleanedLines = lines.map((line) => {
+        // Check if removing the first character results in a known pattern
+        if (line.length > 1) {
+            const possibleMatch = line.slice(1);
+            if (knownPatterns.some((pattern) => possibleMatch.startsWith(pattern))) {
+                return possibleMatch;
+            }
+        }
+        if (line.length == 1) {
+            return "";
+        }
+        return line;
+    });
+
+    // Join cleaned lines back into a single string
+    return cleanedLines.join("\n");
+}
+
 app.post("/run-code", async (req, res) => {
     const { code, sessionId } = req.body;
 
@@ -83,13 +105,9 @@ app.post("/run-code", async (req, res) => {
         setTimeout(() => {
             const cleanedOutput = output
                 .replace(/\r/g, "")
-                .replace(/\u0000|\u0001|\u0018|\u001b|\u001c|\u001d|\[0m/g, ""); // Remove unwanted control characters
+                .replace(/\u0000|\u0001|\u0018|\u001b|\u001c|\u001d|\[1;35m|\[1m|\[0m/g, ""); // Remove unwanted control characters
 
-            // When the container is first created sometimes an 'E' is outputted at the start
-            if (newContainer && output.startsWith("E")) {
-                output = output.slice(1);
-            }
-            res.json({ output: cleanedOutput.trim() }); // Trim any extra whitespace
+            res.json({ output: cleanOutput(cleanedOutput).trim() }); // Trim any extra whitespace
         }, 1000);
     } catch (error) {
         res.status(500).json({ error: "Execution error: " + error.message });
