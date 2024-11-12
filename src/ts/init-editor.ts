@@ -54,11 +54,15 @@ class EditorContainer {
     private async submitCode(): Promise<void> {
         const code = this.editor?.getValue() || "";
         try {
+            const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
+            localStorage.setItem("sessionId", sessionId);
+
             const response = await fetch("https://camel.elliotliu.com/run-code", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code })
+                body: JSON.stringify({ code, sessionId })
             });
+
             const result: RunCodeResponse = await response.json();
 
             if (this.outputChecker && this.resultElement) {

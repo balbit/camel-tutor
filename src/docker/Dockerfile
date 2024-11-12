@@ -1,5 +1,7 @@
 FROM ocaml/opam:alpine-ocaml-5.2
 
+RUN sudo apk update && sudo apk add linux-headers
+
 # Initialize opam and set up the environment
 RUN opam init -y --bare && \
     eval $(opam env) && \
@@ -8,7 +10,9 @@ RUN opam init -y --bare && \
     opam install -y core core_bench utop
 
 # Set up the .ocamlinit file for the `utop` interactive environment
-RUN echo '#require "core.top";;\n#require "ppx_jane";;\nopen Base;;' > ~/.ocamlinit
+RUN echo '#require "core.top";;' > ~/.ocamlinit && \
+    echo '#require "ppx_jane";;' >> ~/.ocamlinit && \
+    echo 'open Base;;' >> ~/.ocamlinit
 
 # Default command to run when starting the container
 CMD ["utop"]
