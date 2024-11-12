@@ -4,26 +4,116 @@ const cors = require("cors");
 const { exec, spawn } = require("child_process");
 const WebSocket = require("ws");
 const fs = require("fs");
+const Docker = require("dockerode");
+const docker = new Docker();
+const stream = require("stream");
 
 const app = express();
 app.use(cors({ origin: "http://camel.elliotliu.com" }));
 app.use(bodyParser.json());
 
-// Handle one-time code execution with POST
-app.post("/run-code", (req, res) => {
-    const { code } = req.body;
+const userSessions = new Map();
 
-    // Save code to a temporary file
-    fs.writeFileSync("/tmp/code.ml", code);
+// Cleanup interval (milliseconds)
+const INACTIVITY_TIMEOUT = 10 * 60 * 1000;
 
-    // Execute OCaml code once
-    exec(`echo ${JSON.stringify(code)} | utop`, (error, stdout, stderr) => {
-        if (error || stderr) {
-            return res.json({ output: stderr || error.message });
-        }
-        res.json({ output: stdout });
+async function getOrCreateContainer(sessionId) {
+    if (userSessions.has(sessionId)) {
+        const session = userSessions.get(sessionId);
+        session.lastAccess = Date.now();
+        return session;
+    }
+
+    const container = await docker.createContainer({
+        Image: "ocaml-utop-fixed",
+        Tty: true,
+        OpenStdin: true,
+        AttachStdin: true,
+        AttachStdout: true,
+        AttachStderr: true,
+        Cmd: ["sleep", "infinity"]
     });
+    await container.start();
+
+    const exec = await container.exec({
+        AttachStdin: true,
+        AttachStdout: true,
+        AttachStderr: true,
+        Tty: true,
+        Cmd: ["opam", "exec", "--", "/home/opam/.opam/5.2.0/bin/utop"]
+    });
+
+    const execStream = await exec.start({ hijack: true, stdin: true });
+    const inputStream = new stream.PassThrough();
+    inputStream.pipe(execStream);
+
+    userSessions.set(sessionId, {
+        container,
+        execStream,
+        inputStream,
+        lastAccess: Date.now()
+    });
+
+    return { container, execStream, inputStream };
+}
+
+app.post("/run-code", async (req, res) => {
+    const { code, sessionId } = req.body;
+
+    if (!sessionId) {
+        return res.status(400).json({ error: "Session ID required" });
+    }
+
+    try {
+        newContainer = !userSessions.has(sessionId);
+
+        const session = await getOrCreateContainer(sessionId);
+        session.lastAccess = Date.now();
+
+        session.execStream.removeAllListeners("data");
+
+        session.inputStream.write(`${code}\n`);
+
+        let output = "";
+        session.execStream.on("data", (data) => {
+            // Convert stream data to string, remove specific unwanted characters, and append to output
+            output += data.toString()
+        });
+
+        setTimeout(() => {
+            const cleanedOutput = output
+                .replace(/\r/g, "")
+                .replace(/\u0000|\u0001|\u0018|\u001b|\u001c|\u001d|\[0m/g, ""); // Remove unwanted control characters
+
+            // When the container is first created sometimes an 'E' is outputted at the start
+            if (newContainer && output.startsWith("E")) {
+                output = output.slice(1);
+            }
+            res.json({ output: cleanedOutput.trim() }); // Trim any extra whitespace
+        }, 1000);
+    } catch (error) {
+        res.status(500).json({ error: "Execution error: " + error.message });
+    }
 });
+
+// Cleanup function to remove inactive containers
+function cleanupInactiveContainers() {
+    const now = Date.now();
+    userSessions.forEach(async (session, sessionId) => {
+        if (now - session.lastAccess > INACTIVITY_TIMEOUT) {
+            try {
+                await session.container.stop();
+                await session.container.remove();
+                userSessions.delete(sessionId);
+                console.log(`Removed inactive container for session ${sessionId}`);
+            } catch (error) {
+                console.error("Error cleaning up container:", error.message);
+            }
+        }
+    });
+}
+
+setInterval(cleanupInactiveContainers, INACTIVITY_TIMEOUT / 2);
 
 const server = app.listen(3000, () => console.log("Server running on port 3000"));
 // Set up WebSocket server for live `utop` interaction
