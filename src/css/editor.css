@@ -1,0 +1,81 @@
+.run-code-button {
+    color: #007acc;
+    background-color: transparent;
+    font-size: 1.1em;
+    padding: 10px 20px;
+    border: 2px solid #007acc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+.run-code-button.submitting {
+    animation: pulse 0.5s infinite alternate;
+}
+
+.run-code-button:hover {
+    background-color: #007acc;
+    color: #fff;
+}
+
+.run-code-button.success {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+    }
+}
+
+/* Hover hint styling */
+.run-code-button::after {
+    content: "(Cmd + Enter)";
+    font-size: 0.8em;
+    color: #007acc;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 105%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.run-code-button:hover::after {
+    opacity: 1;
+}
+
+.run-code-button .spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 2px solid #007acc;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Monaco Editor CSS */
+
+.monaco-editor-inactive {
+    pointer-events: none; /* Prevents interaction */
+}

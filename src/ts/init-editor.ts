@@ -26,12 +26,14 @@ class EditorContainer {
     private outputChecker: OutputChecker | null;
     private resultElement: HTMLElement | null;
     private editor: any | null;
+    private submitButton: HTMLButtonElement | null;
 
     constructor(containerId: string, initialValue: string, monaco: any, outputChecker: OutputChecker | null = null) {
         this.containerId = containerId;
         this.outputChecker = outputChecker;
         this.resultElement = null;
         this.editor = null;
+        this.submitButton = null;
         this.createEditor(initialValue, monaco);
     }
 
@@ -52,9 +54,13 @@ class EditorContainer {
             minimap: { enabled: false }
         });
 
+        this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => this.submitCode());
+
         const submitButton = document.createElement("button");
+        submitButton.className = "run-code-button";
         submitButton.innerText = "Run Code";
         submitButton.onclick = () => this.submitCode();
+        this.submitButton = submitButton;
         container.appendChild(submitButton);
 
         this.resultElement = document.createElement("div");
@@ -66,6 +72,12 @@ class EditorContainer {
 
     private async submitCode(): Promise<void> {
         const code = this.editor?.getValue() || "";
+        const submitButton = this.submitButton;
+        if (submitButton) {
+            submitButton.innerHTML = 'Running... <span class="spinner"></span>';
+            submitButton.classList.add('submitting');
+        }
+
         try {
             const result: RunCodeResponse = await submitCode(code);
 
@@ -85,9 +97,21 @@ class EditorContainer {
                 // Set the escaped output to avoid HTML interpretation
                 this.resultElement.innerHTML = `<pre>${escapedOutput}</pre>`;
             }
+
+            if (submitButton) {
+                submitButton.classList.add('success');
+                setTimeout(() => {
+                    submitButton.classList.remove('success');
+                }, 1000);
+            }
         } catch (error) {
             if (this.resultElement) {
                 this.resultElement.innerHTML = `<span style="color: red;">Error: ${error instanceof Error ? error.message : 'Unknown error'}</span>`;
+            }
+        } finally {
+            if (submitButton) {
+                submitButton.innerHTML = 'Run Code';
+                submitButton.classList.remove('submitting');
             }
         }
     }
