@@ -8,6 +8,19 @@ interface RunCodeResponse {
     output: string;
 }
 
+function submitCode(code: string): Promise<RunCodeResponse> {
+    const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
+    localStorage.setItem("sessionId", sessionId);
+
+    const response = fetch("https://camel.elliotliu.com/run-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, sessionId })
+    });
+
+    return response.then(res => res.json());
+}
+
 class EditorContainer {
     private containerId: string;
     private outputChecker: OutputChecker | null;
@@ -54,16 +67,7 @@ class EditorContainer {
     private async submitCode(): Promise<void> {
         const code = this.editor?.getValue() || "";
         try {
-            const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
-            localStorage.setItem("sessionId", sessionId);
-
-            const response = await fetch("https://camel.elliotliu.com/run-code", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code, sessionId })
-            });
-
-            const result: RunCodeResponse = await response.json();
+            const result: RunCodeResponse = await submitCode(code);
 
             const escapeHtml = (str: string) => 
                 str.replace(/&/g, "&amp;")
@@ -91,6 +95,9 @@ class EditorContainer {
 
 // Function to load the Monaco editor scripts and initialize editors
 function loadMonacoEditor() {
+    // Initialize the backend server by empty submission
+    submitCode(`let camel_tutor = "Welcome to CamelTutor! :)";;\n`).catch(console.error);
+
     // Dynamically load Monaco's AMD loader from CDN
     const monacoLoader = document.createElement("script");
     monacoLoader.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs/loader.min.js";
