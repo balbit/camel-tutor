@@ -59,7 +59,7 @@ class EditorContainer {
             fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace"
         });
 
-        container.addEventListener("click", () => {
+        container.addEventListener("click", (event) => {
             editorDiv.classList.remove("monaco-editor-inactive");
             if (!this.editorFocused) {
                 this.editorFocused = true;
@@ -68,6 +68,15 @@ class EditorContainer {
                 setTimeout(() => {
                     editorDiv.classList.remove("monaco-editor-bloom");
                 }, 600);
+
+                this.editor.focus();
+
+                const editorMousePos = this.editor.getPositionAt(event.clientX, event.clientY);
+                // TODO: Set cursor position based on mouse click
+                // Currently this properly focuses the editor but sets the position to the front
+                if (editorMousePos) {
+                    this.editor.setPosition(editorMousePos);
+                }
             }
         });
 

@@ -107,7 +107,7 @@
     border-radius: 5px; /* Rounded corners */
     padding: 10px; /* Padding for text spacing */
     font-family: "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace; /* Monospaced font */
-    font-size: 12px; /* Adjust font size */
+    font-size: 11px; /* Adjust font size */
     color: #333; /* Dark gray text color */
     white-space: pre-wrap; /* Allow long lines to wrap */
     overflow-x: auto; /* Horizontal scroll for long lines */
