@@ -140,29 +140,62 @@ function cleanOutput(output: string): string {
 }
 
 function sendCodeAndCollectOutput(
-   info: ContainerInfo,
-   code: string,
-   timeout: number = 1000
-): Promise<string> {
-   return new Promise((resolve, reject) => {
-      let output = "";
-
-      const onData = (data: Buffer) => {
-         output += data.toString();
-      };
-
-      info.execStream.on("data", onData);
-
-      info.inputStream.write(`${code}\n`);
-
-      setTimeout(() => {
-         info.execStream.removeListener("data", onData);
-
-         const cleanedOutput = removeCtrlChars(output);
-         resolve(cleanOutput(cleanedOutput).trim());
-      }, timeout);
-   });
-}
+     info: ContainerInfo,
+     code: string
+ ): Promise<string> {
+     return new Promise((resolve, reject) => {
+         let output = "";
+         let dataTimer: NodeJS.Timeout | null = null;
+         let firstDataTimeout: NodeJS.Timeout | null = null;
+         const startTime = Date.now();
+ 
+         const onData = (data: Buffer) => {
+             if (firstDataTimeout) {
+                 clearTimeout(firstDataTimeout);
+                 firstDataTimeout = null;
+             }
+ 
+             output += data.toString();
+ 
+             if (dataTimer) {
+                 clearTimeout(dataTimer);
+             }
+             
+             const elapsed = Date.now() - startTime;
+             dataTimer = setTimeout(finishCollecting, elapsed * 0.3);
+         };
+ 
+         const finishCollecting = () => {
+             info.execStream.removeListener("data", onData);
+ 
+             if (dataTimer) {
+                 clearTimeout(dataTimer);
+                 dataTimer = null;
+             }
+             if (firstDataTimeout) {
+                 clearTimeout(firstDataTimeout);
+                 firstDataTimeout = null;
+             }
+ 
+             const cleanedOutput = removeCtrlChars(output);
+             resolve(cleanOutput(cleanedOutput).trim());
+         };
+ 
+         firstDataTimeout = setTimeout(() => {
+             info.execStream.removeListener("data", onData);
+ 
+             if (dataTimer) {
+                 clearTimeout(dataTimer);
+                 dataTimer = null;
+             }
+ 
+             resolve("");
+         }, 5000);
+ 
+         info.execStream.on("data", onData);
+         info.inputStream.write(`${code}\n`);
+     });
+ }
 
 app.post("/run-code", async (req: any, res: any) => {
    const { code, sessionId } = req.body as RunCodeRequestBody;
@@ -177,9 +210,16 @@ app.post("/run-code", async (req: any, res: any) => {
 
       const info = await session.container;
 
-      const output = await sendCodeAndCollectOutput(info, code, 1000);
+      // const output = await sendCodeAndCollectOutput(info, code);
+      const codeChunks = code.split(";;").map(chunk => chunk.trim()).filter(chunk => chunk.length > 0);
+      let finalOutput = "";
 
-      res.json({ output });
+      for (const chunk of codeChunks) {
+         const chunkOutput = await sendCodeAndCollectOutput(info, `${chunk};;`);
+         finalOutput += chunkOutput + "\n";
+      }
+
+      res.json({ output: finalOutput.trim() });
    } catch (error) {
       res
          .status(500)
