@@ -70,11 +70,28 @@ if [ "$SYNC_HTML" = true ]; then
     rsync -avz -e "ssh -i camel-tutor-micro-key.pem" src/html/* ubuntu@3.128.118.239:/var/www/html/
 fi
 
+# if [ "$SYNC_SERVER" = true ]; then
+#     echo "Syncing server.js to EC2..."
+#     rsync -avz -e "ssh -i camel-tutor-micro-key.pem" server.js ubuntu@3.128.118.239:/home/ubuntu/
+#     echo "Restarting server on EC2..."
+#     ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start server.js --name camel-tutor"
+# fi
+
 if [ "$SYNC_SERVER" = true ]; then
-    echo "Syncing server.js to EC2..."
-    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" server.js ubuntu@3.128.118.239:/home/ubuntu/
+    echo "Building the project..."
+    npm run build:server
+
+    echo "Ensuring server directory exists on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "mkdir -p /home/ubuntu/server/"
+
+    echo "Syncing compiled server files to EC2..."
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" dist-server/ ubuntu@3.128.118.239:/home/ubuntu/server/
+
+    echo "Installing dependencies on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "cd /home/ubuntu/server && npm install --production"
+
     echo "Restarting server on EC2..."
-    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start server.js --name camel-tutor"
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start /home/ubuntu/server/server.js --name camel-tutor"
 fi
 
 # Sync NGINX configuration to EC2 and restart NGINX if SYNC_NGINX is true

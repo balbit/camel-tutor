@@ -1,4 +1,5 @@
 node_modules/
 dist/
+dist-server/
 oldcode/
 camel-tutor-micro-key.pem

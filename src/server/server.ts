@@ -1,0 +1,301 @@
+import express, { Request, Response } from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { exec, spawn } from "child_process";
+import WebSocket, { Server as WebSocketServer } from "ws";
+import fs from "fs";
+import Dockerode from "dockerode";
+import stream from "stream";
+
+const docker = new Dockerode();
+
+const app = express();
+app.use(cors({ origin: "http://camel.elliotliu.com" }));
+app.use(bodyParser.json());
+
+interface UserSession {
+   container: Promise<ContainerInfo>;
+   lastAccess: number;
+}
+
+interface ContainerInfo {
+   container: Dockerode.Container;
+   execStream: NodeJS.ReadWriteStream;
+   inputStream: stream.PassThrough;
+}
+
+interface RunCodeRequestBody {
+   code: string;
+   sessionId: string;
+}
+
+const userSessions = new Map<string, UserSession>();
+
+const INACTIVITY_TIMEOUT = 10 * 60 * 1000;
+
+async function createLiveUtopStream(): Promise<ContainerInfo> {
+   const container = await docker.createContainer({
+      Image: "ocaml-utop-fixed",
+      Tty: true,
+      OpenStdin: true,
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Cmd: ["sleep", "infinity"],
+      User: "1000",
+   });
+
+   await container.start();
+
+   const execInstance = await container.exec({
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: true,
+      Cmd: ["opam", "exec", "--", "/home/opam/.opam/5.2.0/bin/utop"],
+   });
+
+   const execStream = (await execInstance.start({
+      hijack: true,
+      stdin: true,
+   })) as NodeJS.ReadWriteStream;
+
+   const inputStream = new stream.PassThrough();
+   inputStream.pipe(execStream);
+
+   // Wait until utop is spun up, indicated by the output
+   // Type #utop_help for help about using utop.
+
+   await new Promise((resolve) => {
+      execStream.on("data", (data) => {
+         const output = data.toString();
+         if (output.includes("Type #utop_help for help about using utop.")) {
+            resolve(true);
+         }
+      });
+   });
+
+   execStream.removeAllListeners("data");
+
+   // Wait just a bit more to make sure utop is ready
+   await new Promise((resolve) => setTimeout(resolve, 300));
+
+   return { container, execStream, inputStream };
+}
+
+async function getOrCreateContainer(sessionId: string): Promise<UserSession> {
+   if (userSessions.has(sessionId)) {
+      const session = userSessions.get(sessionId)!;
+      session.lastAccess = Date.now();
+      return session;
+   }
+
+   const session = {
+      container: createLiveUtopStream(),
+      lastAccess: Date.now(),
+   };
+
+   userSessions.set(sessionId, session);
+
+   return session;
+}
+
+function removeCtrlChars(str: string): string {
+   return str
+      .replace(/\r/g, "")
+      .replace(
+         /\u0000|\u0001|\u0018|\u001b|\u001c|\u001d|\[1;35m|\[1m|\[0m/g,
+         ""
+      );
+}
+
+function cleanOutput(output: string): string {
+   const knownPatterns = [
+      "val",
+      "-",
+      "module",
+      "Warning",
+      "Error",
+      "Line",
+      "If",
+      "let",
+      "type",
+   ];
+   const lines = output.split("\n");
+
+   const cleanedLines = lines.map((line) => {
+      if (line.length > 1) {
+         const possibleMatch = line.slice(1);
+         if (knownPatterns.some((pattern) => possibleMatch.startsWith(pattern))) {
+            return possibleMatch;
+         }
+      }
+      if (line.length === 1) {
+         return "";
+      }
+      return line;
+   });
+
+   return cleanedLines.join("\n");
+}
+
+function sendCodeAndCollectOutput(
+   info: ContainerInfo,
+   code: string,
+   timeout: number = 1000
+): Promise<string> {
+   return new Promise((resolve, reject) => {
+      let output = "";
+
+      const onData = (data: Buffer) => {
+         output += data.toString();
+      };
+
+      info.execStream.on("data", onData);
+
+      info.inputStream.write(`${code}\n`);
+
+      setTimeout(() => {
+         info.execStream.removeListener("data", onData);
+
+         const cleanedOutput = removeCtrlChars(output);
+         resolve(cleanOutput(cleanedOutput).trim());
+      }, timeout);
+   });
+}
+
+app.post("/run-code", async (req: any, res: any) => {
+   const { code, sessionId } = req.body as RunCodeRequestBody;
+
+   if (!sessionId) {
+      return res.status(400).json({ error: "Session ID required" });
+   }
+
+   try {
+      const session = await getOrCreateContainer(sessionId);
+      session.lastAccess = Date.now();
+
+      const info = await session.container;
+
+      const output = await sendCodeAndCollectOutput(info, code, 1000);
+
+      res.json({ output });
+   } catch (error) {
+      res
+         .status(500)
+         .json({ error: "Execution error: " + (error as Error).message });
+   }
+});
+
+// Cleanup function to remove inactive containers
+function cleanupInactiveContainers() {
+   const now = Date.now();
+   userSessions.forEach(async (session, sessionId) => {
+      if (now - session.lastAccess > INACTIVITY_TIMEOUT) {
+         try {
+            const info = await session.container;
+            await info.container.stop();
+            await info.container.remove();
+            userSessions.delete(sessionId);
+            console.log(`Removed inactive container for session ${sessionId}`);
+         } catch (error) {
+            console.error("Error cleaning up container:", (error as Error).message);
+         }
+      }
+   });
+}
+
+setInterval(cleanupInactiveContainers, INACTIVITY_TIMEOUT / 2);
+
+const server = app.listen(3000, () =>
+   console.log("Server running on port 3000")
+);
+
+// Set up WebSocket server for live `utop` interaction
+const wss = new WebSocketServer({ server, path: "/playground/ws" });
+
+wss.on("connection", async (ws: WebSocket) => {
+   console.log("WebSocket client connected");
+
+   // Create a new container running `utop`
+   const container = await docker.createContainer({
+      Image: "ocaml-utop-fixed", // Replace with the appropriate Docker image for `utop`
+      Tty: true,
+      OpenStdin: true,
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Cmd: ["sleep", "infinity"],
+      HostConfig: {
+         NetworkMode: "none",
+      },
+      User: "1000",
+   });
+
+   ws.send("Creating your OCaml playground...");
+
+   await container.start();
+
+   // Attach to the container’s `utop` output streams
+   const execInstance = await container.exec({
+      AttachStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: true,
+      Cmd: ["opam", "exec", "--", "/home/opam/.opam/5.2.0/bin/utop"],
+   });
+
+   const execStream = (await execInstance.start({
+      hijack: true,
+      stdin: true,
+   })) as NodeJS.ReadWriteStream;
+
+   let userHasInput = false;
+   let streamStarted = false;
+
+   // Stream output from `utop` in the container to the WebSocket client
+   execStream.on("data", (data: Buffer) => {
+      let output = data.toString();
+      output = removeCtrlChars(output);
+      output = cleanOutput(output);
+      if (!streamStarted) {
+         ws.send("Sandbox created!\n");
+         streamStarted = true;
+      }
+      if (userHasInput) {
+         ws.send(output);
+      } else {
+         ws.send(output.trim());
+      }
+   });
+
+   // Send messages from the WebSocket client to the `utop` process in the container
+   ws.on("message", (message: WebSocket.Data) => {
+      userHasInput = true;
+      let msg: string;
+      if (typeof message === "string") {
+         msg = message;
+      } else if (message instanceof Buffer) {
+         msg = message.toString();
+      } else {
+         // Handle other types if necessary
+         msg = "";
+      }
+      execStream.write(`${msg}\n`);
+   });
+
+   // Clean up the container when the WebSocket connection closes
+   ws.on("close", async () => {
+      console.log("WebSocket client disconnected");
+      execStream.end(); // End the input stream to the exec
+      await container.stop();
+      await container.remove();
+   });
+
+   // Error handling for the WebSocket and Docker container
+   ws.on("error", async (error: Error) => {
+      console.error("WebSocket error:", error);
+      await container.stop();
+      await container.remove();
+   });
+});
