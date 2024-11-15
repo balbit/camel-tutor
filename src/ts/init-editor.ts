@@ -9,6 +9,10 @@ interface RunCodeResponse {
     output: string;
 }
 
+function isMobileScreen(): boolean {
+    return window.matchMedia("(max-width: 768px)").matches;
+}
+
 function submitCode(code: string): Promise<RunCodeResponse> {
     const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
     localStorage.setItem("sessionId", sessionId);
@@ -38,6 +42,17 @@ class EditorContainer {
         this.submitButton = null;
         this.editorFocused = false;
         this.createEditor(initialValue, monaco);
+        this.setupResponsiveBehavior(monaco);
+    }
+
+    private setupResponsiveBehavior(monaco: any): void {
+        // Listen for window resize events
+        window.addEventListener("resize", () => {
+            const showLineNumbers = !isMobileScreen();
+            if (this.editor) {
+                this.editor.updateOptions({ lineNumbers: showLineNumbers ? "on" : "off" });
+            }
+        });
     }
 
     private createEditor(initialValue: string, monaco: any): void {
@@ -56,6 +71,7 @@ class EditorContainer {
             theme: "custom-light-theme",
             automaticLayout: true,
             minimap: { enabled: false },
+            lineNumbers: isMobileScreen() ? "off" : "on",
             fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace"
         });
 
@@ -69,14 +85,17 @@ class EditorContainer {
                     editorDiv.classList.remove("monaco-editor-bloom");
                 }, 600);
 
-                this.editor.focus();
+                if (!isMobileScreen()) { // Don't auto-focus on mobile
+                    this.editor.focus();
 
-                const editorMousePos = this.editor.getPositionAt(event.clientX, event.clientY);
-                // TODO: Set cursor position based on mouse click
-                // Currently this properly focuses the editor but sets the position to the front
-                if (editorMousePos) {
-                    this.editor.setPosition(editorMousePos);
+                    const editorMousePos = this.editor.getPositionAt(event.clientX, event.clientY);
+                    // TODO: Set cursor position based on mouse click
+                    // Currently this properly focuses the editor but sets the position to the front
+                    if (editorMousePos) {
+                        this.editor.setPosition(editorMousePos);
+                    }
                 }
+
             }
         });
 
@@ -299,6 +318,9 @@ function initializeEditors(monaco: any) {
 
         // Find the code block within the div.highlight
         const codeBlock = section.querySelector("code.language-ocaml");
+        if (!codeBlock) {
+            return;
+        }
 
         // Get the code text content, or use a default if not found
         const initialCode = codeBlock ? extractRunnableCode(codeBlock.textContent ?? "(** No code found **)" ) : "(** No code found **)";

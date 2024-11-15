@@ -102,15 +102,15 @@
 
 /* Output block */
 .result-output {
-    background-color: #f5f5f5; /* Light gray background for readability */
-    border: 1px solid #ddd; /* Subtle border */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Padding for text spacing */
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
     font-family: "Consolas", "Monaco", "Andale Mono", "Ubuntu Mono", monospace; /* Monospaced font */
-    font-size: 11px; /* Adjust font size */
-    color: #333; /* Dark gray text color */
-    white-space: pre-wrap; /* Allow long lines to wrap */
-    overflow-x: auto; /* Horizontal scroll for long lines */
-    max-height: 200px; /* Optional: limit height and add scroll */
-    margin-top: 10px; /* Spacing above the output block */
+    font-size: 0.9em;
+    color: #333;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    max-height: 600px;
+    margin-top: 10px;
 }
