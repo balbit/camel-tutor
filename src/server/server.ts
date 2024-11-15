@@ -182,15 +182,18 @@ function sendCodeAndCollectOutput(
          };
  
          firstDataTimeout = setTimeout(() => {
-             info.execStream.removeListener("data", onData);
- 
-             if (dataTimer) {
-                 clearTimeout(dataTimer);
-                 dataTimer = null;
-             }
- 
-             resolve("");
-         }, 5000);
+            info.execStream.removeListener("data", onData);
+   
+            if (dataTimer) {
+               clearTimeout(dataTimer);
+               dataTimer = null;
+            }
+
+            // Send a Ctrl+C to terminate the process
+            info.inputStream.write('\x03');
+
+            setTimeout(() => {resolve("(no output / terminated)")}, 100);
+          }, 5000);
  
          info.execStream.on("data", onData);
          info.inputStream.write(`${code}\n`);
