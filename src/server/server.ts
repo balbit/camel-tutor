@@ -363,9 +363,9 @@ wss.on("connection", async (ws: WebSocket) => {
          streamStarted = true;
       }
       clearTimers();
-      // if (isProbeOutput(output)) {
-      //    return;
-      // }
+      if (isProbeOutput(output)) {
+         return;
+      }
       if (userHasInput) {
          ws.send(output);
       } else {

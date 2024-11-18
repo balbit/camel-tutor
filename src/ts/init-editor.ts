@@ -332,26 +332,29 @@ function registerMonacoOcaml(monaco: any) {
 }
 
 // Function to load the Monaco editor scripts and initialize editors
-function loadMonacoEditor() {
+async function loadMonacoEditor(): Promise<void> {
     // Initialize the backend server by empty submission
     submitCode(`let camel_tutor = "Welcome to CamelTutor! :)";;\n`).catch(console.error);
 
-    // Dynamically load Monaco's AMD loader from CDN
-    const monacoLoader = document.createElement("script");
-    monacoLoader.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs/loader.min.js";
-    monacoLoader.onload = () => {
-        // Configure Monaco's path for loading additional modules
-        (window as any).require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs" }});
-        (window as any).require(["vs/editor/editor.main"], (monaco: any) => {
-            registerMonacoOcaml(monaco);
-            initializeEditors(monaco);
-        });
-    };
-    document.body.appendChild(monacoLoader);
+    return new Promise((resolve, reject) => {
+
+        // Dynamically load Monaco's AMD loader from CDN
+        const monacoLoader = document.createElement("script");
+        monacoLoader.src = "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs/loader.min.js";
+        monacoLoader.onload = () => {
+            // Configure Monaco's path for loading additional modules
+            (window as any).require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs" }});
+            (window as any).require(["vs/editor/editor.main"], (monaco: any) => {
+                registerMonacoOcaml(monaco);
+                initializeEditors(monaco, resolve);
+            });
+        };
+        document.body.appendChild(monacoLoader);
+    });
 }
 
 // Function to initialize editors in each specified section
-function initializeEditors(monaco: any) {
+function initializeEditors(monaco: any, resolve: any) {
     const sections = document.querySelectorAll<HTMLElement>("div.highlight");
 
     sections.forEach((section, index) => {
@@ -370,7 +373,25 @@ function initializeEditors(monaco: any) {
         // Initialize EditorContainer with the extracted code
         new EditorContainer(containerId, initialCode, monaco);
     });
+
+    resolve();
+}
+
+function loadScript(src: string) {
+    return new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.defer = true;
+        script.onload = resolve;
+        document.head.appendChild(script);
+    });
 }
 
 // Load and initialize Monaco Editor when DOM is ready
-document.addEventListener("DOMContentLoaded", loadMonacoEditor);
+document.addEventListener("DOMContentLoaded", async() => {
+    await loadMonacoEditor();
+
+    // Load back the Prism.js and Modernizr scripts we disabled
+    await loadScript('js/prism.js');
+    await loadScript('js/min/modernizr-min.js');
+});

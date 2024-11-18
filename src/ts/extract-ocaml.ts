@@ -1,12 +1,10 @@
 export function extractLegalOCamlLines(input: string): string[] {
     const lines = input.split('\n');
   
+    // Now that we defer prism.js, we can directly filter out terminal outputs
+    // by checking if the line starts with ">"
     const legalLines = lines.filter(line => {
-      return !/^\s*val\s+\w+\s*:/.test(line) && // Matches 'val <name> :' at the start
-             !/^\s*Exception:/.test(line) &&    // Matches 'Exception: ...' at the start
-             !/^\s*-\s*:\s/.test(line) &&       // Matches '- : ...' at the start
-             !/^\s*Line\s+\d+,.*/.test(line) && // Matches 'Line <number>, ...' for error locations
-             !/^\s*Error:/.test(line);          // Matches 'Error: ...' at the start
+        return line.trim().length > 0 && !line.trim().startsWith(">");
     });
   
     return legalLines;
