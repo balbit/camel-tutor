@@ -296,6 +296,63 @@ wss.on("connection", async (ws: WebSocket) => {
    let userHasInput = false;
    let streamStarted = false;
 
+   let executionTimer: NodeJS.Timeout | null = null;
+   let graceTimer: NodeJS.Timeout | null = null;
+
+   let PROBE_STRING = "let camelTutor_playground_probe = 42;;";
+   function isProbeOutput(output: string): boolean {
+      return output.includes("camelTutor_playground_probe");
+   }
+
+   /**
+    * Sends SIGINT (Ctrl+C) to the `utop` process after MAX_EXECUTION_TIME.
+    * If `utop` does not terminate within GRACE_PERIOD, the container is forcefully killed.
+    */
+   const startExecutionTimer = () => {
+      const MAX_EXECUTION_TIME = 10000;
+      const GRACE_PERIOD = 5000;
+
+      if (executionTimer) {
+         clearTimeout(executionTimer);
+      }
+
+      executionTimer = setTimeout(async () => {
+         ws.send("Warning: Execution time exceeded 10 seconds. Attempting to terminate the process...");
+
+         // Send Ctrl+C to `utop` by writing '\x03' to the execStream's stdin
+         execStream.write('\x03');
+
+         // wait 1s and send a probe to check if the process is still running
+         setTimeout(() => {
+            execStream.write(`${PROBE_STRING}\n`);
+         }, 1000);
+
+         // Start grace period timer
+         graceTimer = setTimeout(async () => {
+            ws.send("Error: Process did not terminate gracefully. Terminating your session.\nPlease reload CamelTutor Playground to start a new session.");
+            execStream.end(); // End the input stream to `utop`
+            try {
+               await container.kill();
+               await container.remove();
+               ws.close();
+            } catch (err) {
+               console.error("Error terminating container:", err);
+            }
+         }, GRACE_PERIOD);
+      }, MAX_EXECUTION_TIME);
+   };
+
+   const clearTimers = () => {
+      if (executionTimer) {
+         clearTimeout(executionTimer);
+         executionTimer = null;
+      }
+      if (graceTimer) {
+         clearTimeout(graceTimer);
+         graceTimer = null;
+      }
+   };
+
    // Stream output from `utop` in the container to the WebSocket client
    execStream.on("data", (data: Buffer) => {
       let output = data.toString();
@@ -305,6 +362,10 @@ wss.on("connection", async (ws: WebSocket) => {
          ws.send("Sandbox created!\n");
          streamStarted = true;
       }
+      clearTimers();
+      // if (isProbeOutput(output)) {
+      //    return;
+      // }
       if (userHasInput) {
          ws.send(output);
       } else {
@@ -323,6 +384,10 @@ wss.on("connection", async (ws: WebSocket) => {
       } else {
          // Handle other types if necessary
          msg = "";
+      }
+      // if msg has ';;', then mark it as an execution and start the timer
+      if (msg.includes(";;")) {
+         startExecutionTimer();
       }
       execStream.write(`${msg}\n`);
    });
