@@ -26,11 +26,17 @@ function submitCode(code: string): Promise<RunCodeResponse> {
     return response.then(res => res.json());
 }
 
+const MIN_HEIGHT = 100; // in pixels
+const INITIAL_MAX_HEIGHT = 200; // in pixels
+const FOCUSED_MAX_HEIGHT = 700; // in pixels
+const LINE_HEIGHT = 20; // Approximate height per line in pixels
+
 class EditorContainer {
     private containerId: string;
     private outputChecker: OutputChecker | null;
     private resultElement: HTMLElement | null;
     private editor: any | null;
+    private editorDiv: any | null;
     private submitButton: HTMLButtonElement | null;
     private editorFocused: boolean;
 
@@ -39,6 +45,7 @@ class EditorContainer {
         this.outputChecker = outputChecker;
         this.resultElement = null;
         this.editor = null;
+        this.editorDiv = null;
         this.submitButton = null;
         this.editorFocused = false;
         this.createEditor(initialValue, monaco);
@@ -55,15 +62,37 @@ class EditorContainer {
         });
     }
 
+    private calculateHeight(lineCount: number, maxHeight: number): number {
+        const calculatedHeight = lineCount * LINE_HEIGHT + 20; // Adding padding
+        return Math.min(Math.max(calculatedHeight, MIN_HEIGHT), maxHeight);
+    }
+
+    private adjustHeight(): void {
+        if (!this.editorDiv || !this.editor) return;
+
+        const maxHeight = this.editorFocused ? FOCUSED_MAX_HEIGHT : INITIAL_MAX_HEIGHT;
+
+        // Get the number of lines in the editor
+        const lineCount = this.editor.getModel()?.getLineCount() || 1;
+        const newHeight = this.calculateHeight(lineCount, maxHeight);
+
+        // Update the editor div's height
+        this.editorDiv.style.height = `${newHeight}px`;
+
+        // Notify Monaco to layout the editor correctly
+        this.editor.layout();
+    }
+
     private createEditor(initialValue: string, monaco: any): void {
         const container = document.getElementById(this.containerId);
         if (!container) throw new Error(`Container with ID ${this.containerId} not found`);
 
         const editorDiv = document.createElement("div");
         editorDiv.style.width = "100%";
-        editorDiv.style.height = "200px";
+        editorDiv.style.height = "100px";
         editorDiv.classList.add("monaco-editor-inactive");
         container.appendChild(editorDiv);
+        this.editorDiv = editorDiv;
 
         this.editor = monaco.editor.create(editorDiv, {
             value: initialValue,
@@ -73,6 +102,19 @@ class EditorContainer {
             minimap: { enabled: false },
             lineNumbers: isMobileScreen() ? "off" : "on",
             fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace"
+        });
+
+        this.editor.onDidChangeModelContent(() => {
+            this.adjustHeight();
+        });
+
+        // Listen to focus and blur events
+        this.editor.onDidFocusEditorWidget(() => {
+            this.adjustHeight();
+        });
+
+        this.editor.onDidBlurEditorWidget(() => {
+            this.adjustHeight();
         });
 
         container.addEventListener("click", (event) => {

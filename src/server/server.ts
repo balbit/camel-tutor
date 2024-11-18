@@ -33,8 +33,8 @@ const userSessions = new Map<string, UserSession>();
 
 const INACTIVITY_TIMEOUT = 10 * 60 * 1000;
 
-async function createLiveUtopStream(): Promise<ContainerInfo> {
-   const container = await docker.createContainer({
+async function createSecureContainer(): Promise<Dockerode.Container> {
+   return docker.createContainer({
       Image: "ocaml-utop-fixed",
       Tty: true,
       OpenStdin: true,
@@ -42,8 +42,20 @@ async function createLiveUtopStream(): Promise<ContainerInfo> {
       AttachStdout: true,
       AttachStderr: true,
       Cmd: ["sleep", "infinity"],
-      User: "1000",
+      User: "1000", // Non-root user
+      HostConfig: {
+      //   CpuShares: 512, // Relative CPU weight
+        Memory: 512 * 1024 * 1024,
+        MemorySwap: 1024 * 1024 * 1024,
+        PidsLimit: 50, // Maximum number of processes
+      //   AutoRemove: true,
+      //   NetworkMode: 'none',
+      },
    });
+}
+
+async function createLiveUtopStream(): Promise<ContainerInfo> {
+   const container = await createSecureContainer();
 
    await container.start();
 
@@ -261,19 +273,7 @@ wss.on("connection", async (ws: WebSocket) => {
    console.log("WebSocket client connected");
 
    // Create a new container running `utop`
-   const container = await docker.createContainer({
-      Image: "ocaml-utop-fixed", // Replace with the appropriate Docker image for `utop`
-      Tty: true,
-      OpenStdin: true,
-      AttachStdin: true,
-      AttachStdout: true,
-      AttachStderr: true,
-      Cmd: ["sleep", "infinity"],
-      HostConfig: {
-         NetworkMode: "none",
-      },
-      User: "1000",
-   });
+   const container = await createSecureContainer();
 
    ws.send("Creating your OCaml playground...");
 
