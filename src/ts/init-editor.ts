@@ -26,7 +26,7 @@ function submitCode(code: string): Promise<RunCodeResponse> {
     return response.then(res => res.json());
 }
 
-const MIN_HEIGHT = 100; // in pixels
+const MIN_HEIGHT = 130; // in pixels
 const INITIAL_MAX_HEIGHT = 200; // in pixels
 const FOCUSED_MAX_HEIGHT = 700; // in pixels
 const LINE_HEIGHT = 20; // Approximate height per line in pixels

@@ -1,0 +1,69 @@
+li {
+    padding: 8px 16px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+li.completed {
+    background-color: #e0ffe0;
+    color: #006400;
+}
+
+li.incomplete {
+    color: inherit;
+}
+
+.completion-button {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    font-size: 16px;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+li:hover .completion-button {
+    opacity: 1;
+}
+
+/* Ensure <li> uses flexbox for alignment */
+li {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    align-items: center; /* Center vertically */
+    gap: 8px; /* Space between the date label and button */
+    position: relative; /* For fine adjustments if needed */
+}
+
+/* Date label styles */
+.date-label {
+font-size: 12px;
+color: #666;
+visibility: hidden; /* Hidden by default */
+opacity: 0; /* Fully transparent by default */
+transition: visibility 0.3s, opacity 0.3s ease; /* Smooth hover effect */
+text-align: right;
+}
+
+/* Show date label on hover */
+li:hover .date-label {
+visibility: visible; /* Show on hover */
+opacity: 1; /* Fully opaque when hovered */
+}
+
+/* Button styles */
+.completion-button {
+background-color: transparent;
+border: 1px solid #ccc;
+width: 20px;
+height: 20px;
+border-radius: 3px; /* Rounded corners */
+cursor: pointer;
+font-size: 16px;
+line-height: 18px;
+text-align: right;
+}
