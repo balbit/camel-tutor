@@ -6,6 +6,7 @@ SYNC_CSS=false
 SYNC_ASSETS=false
 SYNC_NGINX=false
 SYNC_HTML=false
+SYNC_QUESTIONS=false
 
 # If no parameters are provided, sync everything
 if [ "$#" -eq 0 ]; then
@@ -14,6 +15,7 @@ if [ "$#" -eq 0 ]; then
     SYNC_ASSETS=true
     SYNC_NGINX=true
     SYNC_HTML=true
+    SYNC_QUESTIONS=true
 else
     # Parse arguments to set sync flags
     for arg in "$@"; do
@@ -35,6 +37,12 @@ else
                 ;;
             server)
                 SYNC_SERVER=true
+                ;;
+            questions)
+                SYNC_QUESTIONS=true
+                ;;
+            q)
+                SYNC_QUESTIONS=true
                 ;;
             *)
                 echo "Invalid option: $arg"
@@ -70,12 +78,10 @@ if [ "$SYNC_HTML" = true ]; then
     rsync -avz -e "ssh -i camel-tutor-micro-key.pem" src/html/* ubuntu@3.128.118.239:/var/www/html/
 fi
 
-# if [ "$SYNC_SERVER" = true ]; then
-#     echo "Syncing server.js to EC2..."
-#     rsync -avz -e "ssh -i camel-tutor-micro-key.pem" server.js ubuntu@3.128.118.239:/home/ubuntu/
-#     echo "Restarting server on EC2..."
-#     ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start server.js --name camel-tutor"
-# fi
+if [ "$SYNC_QUESTIONS" = true ]; then
+    echo "Syncing questions to EC2..."
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" questions/*.json ubuntu@3.128.118.239:/home/ubuntu/server/questions/
+fi
 
 if [ "$SYNC_SERVER" = true ]; then
     echo "Building the project..."

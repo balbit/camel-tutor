@@ -1,8 +1,10 @@
 import { register } from "module";
 import { extractRunnableCode } from "./extract-ocaml.js";
+import { submitCode } from "./api.js";
+import { initializeQuizzes } from "./init-questions.js";
 
 interface OutputChecker {
-    (output: string): boolean;
+    (output: string): Promise<[boolean, string]>;
 }
 
 interface RunCodeResponse {
@@ -13,25 +15,12 @@ function isMobileScreen(): boolean {
     return window.matchMedia("(max-width: 768px)").matches;
 }
 
-function submitCode(code: string): Promise<RunCodeResponse> {
-    const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
-    localStorage.setItem("sessionId", sessionId);
-
-    const response = fetch("https://camel.elliotliu.com/run-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, sessionId })
-    });
-
-    return response.then(res => res.json());
-}
-
 const MIN_HEIGHT = 130; // in pixels
 const INITIAL_MAX_HEIGHT = 200; // in pixels
 const FOCUSED_MAX_HEIGHT = 700; // in pixels
 const LINE_HEIGHT = 20; // Approximate height per line in pixels
 
-class EditorContainer {
+export class EditorContainer {
     private containerId: string;
     private outputChecker: OutputChecker | null;
     private resultElement: HTMLElement | null;
@@ -181,7 +170,7 @@ class EditorContainer {
             const escapedOutput = escapeHtml(result.output);
     
             if (this.outputChecker && this.resultElement) {
-                const isCorrect = this.outputChecker(result.output);
+                const [isCorrect, message] = await this.outputChecker(result.output);
                 this.resultElement.innerHTML = isCorrect
                     ? `<span style="color: green;">Correct:</span><pre style="color: green;">${escapedOutput}</pre>`
                     : `<span style="color: red;">Incorrect:</span><pre style="color: red;">${escapedOutput}</pre>`;
@@ -345,6 +334,7 @@ async function loadMonacoEditor(): Promise<void> {
             // Configure Monaco's path for loading additional modules
             (window as any).require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.31.1/min/vs" }});
             (window as any).require(["vs/editor/editor.main"], (monaco: any) => {
+                (window as any).monaco = monaco;
                 registerMonacoOcaml(monaco);
                 initializeEditors(monaco, resolve);
             });
@@ -391,6 +381,7 @@ function loadScript(src: string) {
 document.addEventListener("DOMContentLoaded", async() => {
     await loadMonacoEditor();
 
+    initializeQuizzes();
     // Load back the Prism.js and Modernizr scripts we disabled
     await loadScript('js/prism.js');
     await loadScript('js/min/modernizr-min.js');

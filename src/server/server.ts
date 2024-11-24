@@ -242,6 +242,25 @@ app.post("/run-code", async (req: any, res: any) => {
    }
 });
 
+const path = require("path");
+app.get("/get-questions", async (req: any, res: any) => {
+   const { sessionId, chapter } = req.query;
+   if (typeof sessionId !== "string" || typeof chapter !== "string") {
+       return res.status(400).json({ error: "Invalid request" });
+   }
+
+   const questionsPath = path.resolve(__dirname, "./questions/questions.json");
+   console.log("Resolved path to questions.json:", questionsPath);
+
+   try {
+       const questions = fs.readFileSync(questionsPath, "utf-8");
+       res.json({ questions: JSON.parse(questions) });
+   } catch (err) {
+       console.error("Error reading questions.json");
+       res.status(500).json({ error: "Unable to read questions file" });
+   }
+});
+
 // Cleanup function to remove inactive containers
 function cleanupInactiveContainers() {
    const now = Date.now();
