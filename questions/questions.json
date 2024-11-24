@@ -1,0 +1,2138 @@
+[
+    {
+        "id": "86aae3ac-cb34-4e5b-b76f-4c49fca7f33d",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "multiple_choice",
+        "question": "What is the output type of the List.find function in OCaml?",
+        "choices": [
+            "int",
+            "a option",
+            "string",
+            "Result.t"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "f6966902-c284-435a-9b63-db43dbee846a",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "multiple_choice",
+        "question": "Which OCaml data structure allows you to signal an error while providing context?",
+        "choices": [
+            "Option.t",
+            "Result.t",
+            "List.t",
+            "Array.t"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "5160fe45-0831-4899-8e3a-663156cd8d58",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "programming",
+        "question": "Implement a function `compute_bounds` that takes a list of comparable elements and returns their minimum and maximum as an option type.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "\nlet compute_bounds ~compare list =\n    (* your code here *)\n",
+        "test_code": "\nlet () =\n    let compare x y = compare x y in\n    assert (compute_bounds ~compare [3; 1; 2] = Some (1, 3));\n    assert (compute_bounds ~compare [] = None);\n    assert (compute_bounds ~compare [5] = Some (5, 5))\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "e788bf44-e5f1-4060-86e5-91b66255dded",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "programming",
+        "question": "Create a function that finds mismatches between two hash tables and returns a list of keys with different associated values.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "\nlet find_mismatches table1 table2 =\n    (* your code here *)\n",
+        "test_code": "\nlet () =\n    let table1 = Hashtbl.Poly.create () in\n    let table2 = Hashtbl.Poly.create () in\n    Hashtbl.Poly.add_exn table1 ~key:\"a\" ~data:1;\n    Hashtbl.Poly.add_exn table1 ~key:\"b\" ~data:2;\n    Hashtbl.Poly.add_exn table2 ~key:\"a\" ~data:1;\n    Hashtbl.Poly.add_exn table2 ~key:\"b\" ~data:3;\n    assert (find_mismatches table1 table2 = [\"b\"]);\n    assert (find_mismatches table1 (Hashtbl.Poly.create ()) = []);\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "53c8ebfb-7fae-413c-9967-5a58d2d0c8d1",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "What is the primary purpose of the `Result.t` type in OCaml?",
+        "choices": [
+            "To represent optional values with a possibility of being `None`",
+            "To provide a way to encode errors with additional information",
+            "To implement a queue data structure",
+            "To store multiple values of different types"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "643c948e-ead5-467d-8506-db3fa00e86a6",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "Which of the following constructors belongs to the `Result.t` type?",
+        "choices": [
+            "Some",
+            "None",
+            "Ok",
+            "Error"
+        ],
+        "correct_answers": [
+            2,
+            3
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "94d7a648-aa35-4f2a-90c2-36539fd698eb",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Implement a function that takes a list of integers and returns a result indicating either the sum of the integers, or an error message if the list is empty using Result.t.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_sum lst = (* your code here *)",
+        "test_code": "\n            let () = \n                match safe_sum [1; 2; 3] with\n                | Ok sum -> assert (sum = 6)\n                | Error msg -> assert false; (* This should not happen *)\n            \n                match safe_sum [] with\n                | Ok sum -> assert false; (* This should not happen *)\n                | Error msg -> assert (msg = \"Empty list provided\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "16d3c2c7-bb2c-47f7-bf4b-f64795767522",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Define a function that takes a list of results and combines them into a single result, returning an error if any error happens or the accumulation of all success values.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let combine_results lst = (* your code here *)",
+        "test_code": "\n            let () = \n                let results1 = [Ok 1; Ok 2; Ok 3] in\n                match combine_results results1 with\n                | Ok total -> assert (total = [1; 2; 3])\n                | Error msg -> assert false; (* This should not happen *)\n            \n                let results2 = [Ok 1; Error \"Failed at 2\"; Ok 3] in\n                match combine_results results2 with\n                | Ok total -> assert false; (* This should not happen *)\n                | Error msg -> assert (msg = \"Failed at 2\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4a5019f9-49ba-47c1-b487-bff6a9cbf451",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `bind` function in OCaml's Option module?",
+        "choices": [
+            "To encapsulate an operation that can fail without executing the function if the option is None",
+            "To convert a list of options into a single option containing a list",
+            "To handle exceptions in a monadic context",
+            "To apply a function to each element in a list"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "338ab007-c1d5-45b5-a318-87cf32c58320",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "What does the expression `let%bind first = List.hd sorted in ...` using Let_syntax effectively translate to?",
+        "choices": [
+            "Option.bind (List.hd sorted) ~f:(fun first -> ...)",
+            "Fail if List.hd sorted returns None",
+            "A direct assignment from List.hd sorted",
+            "A monadic operation that guarantees List.hd sorted is not None"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "64a8efd1-1d1d-40c1-8a57-c2c76add2a1d",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Implement a function that retrieves both the first and last element of a list in OCaml, returning them as an option. Use the `Option.both` function to simplify your implementation.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let compute_bounds ~compare list = (* your code here *)",
+        "test_code": "\n            let () =\n                let result1 = compute_bounds ~compare:Int.compare [4; 2; 5; 1; 3] in\n                let result2 = compute_bounds ~compare:Int.compare [] in\n                match result1 with\n                | Some (first, last) -> assert (first = 1 && last = 5);\n                | None -> assert false;\n\n                match result2 with\n                | Some _ -> assert false;\n                | None -> ()\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "cdc0b58b-682e-4a21-917f-5bf9955546df",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Write a function that calculates the maximum value in a list using the `List.fold_left` function and `Option.bind` for error handling. Return None if the list is empty.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let maximum lst = (* your code here *)",
+        "test_code": "\n            let () =\n                assert (maximum [1; 2; 3; 4] = Some 4);\n                assert (maximum [] = None);\n                assert (maximum [-1; -2; -3] = Some (-1))\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "2a890b67-1668-429e-85b0-b3e615c9926f",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the behavior of exceptions in OCaml when an exception is triggered within a nested function call?",
+        "choices": [
+            "The execution of the main function continues normally.",
+            "The nested function call is terminated, and execution jumps back to the outer function.",
+            "The entire program terminates immediately.",
+            "The exception is ignored if it's within a nested function."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "e4dc8be2-1d15-4e0d-ad4e-3754a7df9379",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `try/with` construct in OCaml?",
+        "choices": [
+            "To iterate over a list while handling exceptions.",
+            "To perform error recovery and manage exceptions.",
+            "To declare new exceptions in the program.",
+            "To optimize performance by skipping bad computations."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "a63b954b-f4fa-4139-b29a-723e4e811ccb",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "programming",
+        "question": "Implement a function that safely retrieves a value from an association list and returns a default value if the key is not found, or raises an exception if there are multiple keys present.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_lookup alist key default_value = (* your code here *)",
+        "test_code": "\n            let () =\n                let alist = [(\"a\", 1); (\"b\", 2); (\"c\", 3)] in\n                assert (safe_lookup alist \"a\" 0 = 1);\n                assert (safe_lookup alist \"b\" 0 = 2);\n                assert (safe_lookup alist \"d\" 0 = 0);\n                try\n                    let _ = safe_lookup alist \"multiple\" 0 in\n                    assert false  (* This should not be reached *)\n                with\n                | Failure msg -> assert (msg = \"Key found in multiple pairs\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "543480d0-e855-49be-9b7c-ef3c4df260b0",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "programming",
+        "question": "Create a function that reads floating-point numbers from a file, handling the case where the file may not exist or its contents may be malformed. Use exception handling to manage errors gracefully.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let read_floats_from_file filename = (* your code here *)",
+        "test_code": "\n            let () =\n                let _ = read_floats_from_file \"existing_file.txt\" in\n                assert (read_floats_from_file \"non_existing_file.txt\" = []);\n                assert (read_floats_from_file \"malformed_file.txt\" = []);\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "16ab1d06-0e64-43eb-822c-0e63347d7279",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the function `failwith` in OCaml?",
+        "choices": [
+            "To handle exceptions gracefully without crashing the program",
+            "To simply raise an exception with a specific message",
+            "To merge two lists with a custom function",
+            "To assert conditions during runtime, ensuring certain criteria are met"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "1d60e0b6-b1a8-4769-a1b0-2c8ba9ed9e6e",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What happens if the `assert false` statement is reached in the code?",
+        "choices": [
+            "The program continues executing the next statement",
+            "A specific exception is raised with line number and character offset information",
+            "The lists are merged and returned as a result",
+            "The type of the lists is checked for incompatibility"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "6fd3082a-89eb-4540-881d-d79cd3c5bd23",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Implement a function `merge_lists` in OCaml that merges two lists using a provided function f, returning an option type.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let merge_lists xs ys ~f = (* your code here *)",
+        "test_code": "\n            let () = \n                assert (merge_lists [1;2;3] [-1;1;2] ~f:(+) = Some [0; 3; 5]);\n                assert (merge_lists [1;2;3] [-1;1] ~f:(+) = None);\n                assert (merge_lists [] [] ~f:(+) = Some []);\n                assert (merge_lists [1] [] ~f:(+) = None)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "729afa19-a529-4f09-b896-9718922f9f8a",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Implement an exception-aware list processing function that raises a Failure exception if the input list is empty.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let process_list lst = (* your code here *)",
+        "test_code": "\n            let () =\n                assert (process_list [1; 2; 3] = 6);  (* Assume this function sums elements *)\n                try \n                    let _ = process_list [] in\n                    assert false  (* We expect an exception here *)\n                with\n                | Failure msg -> assert (msg = \"Empty list!\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "02787fa0-8714-45bf-9019-6b2b292d1d9c",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "multiple_choice",
+        "question": "What is the primary purpose of an exception handler in OCaml?",
+        "choices": [
+            "To improve program efficiency by reducing execution time",
+            "To allow a program to respond to and recover from exceptions",
+            "To enforce type safety across the program",
+            "To optimize memory usage"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "16658f50-5e83-4ae9-b66d-22042decae36",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "multiple_choice",
+        "question": "What happens when an exception is thrown in a try block but does not match any pattern in the with section?",
+        "choices": [
+            "The program terminates immediately",
+            "The exception is logged, and program execution continues",
+            "The exception is passed to the next outer exception handler",
+            "The original exception is discarded"
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "6112719d-1532-40c4-b94c-09efcf746671",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "programming",
+        "question": "Implement a function that performs division and handles division by zero using exception handling.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "\n        exception Division_by_zero\n\n        let safe_divide x y =\n            try\n                if y = 0 then raise Division_by_zero\n                else x / y\n            with\n            | Division_by_zero -> 0\n        ",
+        "test_code": "\n            let () = \n                assert (safe_divide 10 2 = 5);\n                assert (safe_divide 10 0 = 0);\n                assert (safe_divide 15 3 = 5);\n                assert (safe_divide 1 0 = 0)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "fe59c4dd-f7fc-42be-a5ff-e90fd8639964",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "programming",
+        "question": "Create a function that reads an integer from a user input and handles invalid input using exception handling.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "\n        exception Invalid_input\n\n        let read_integer () =\n            try\n                let input = read_line () in\n                int_of_string input\n            with\n            | Failure _ -> raise Invalid_input\n        ",
+        "test_code": "\n            let () = \n                (* Testing is difficult because it depends on input, \n                   here we'll assume valid input for this test to succeed. *)\n                assert (try read_integer () = 42 with Invalid_input -> false)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "b563c879-c9d8-4d6f-a560-e3ff9be124e9",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What purpose does the `Exn.protect` function serve in OCaml?",
+        "choices": [
+            "It automatically handles exceptions and ensures resources are cleaned up.",
+            "It throws an exception if an error occurs during resource allocation.",
+            "It compresses the error handling code into a single function call.",
+            "It guarantees that a file descriptor will always be leaked."
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "812e59cc-2b22-4bd3-9379-ab7e920361df",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the advantage of using `In_channel.with_file` over manually handling the file opening and closing?",
+        "choices": [
+            "It avoids the risk of leaving file descriptors open in case of exceptions.",
+            "It uses less memory than manually managing file descriptors.",
+            "It allows for asynchronous file handling operations.",
+            "It directly returns a string instead of a list of floats."
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "51a71a55-3218-4d9a-829d-81f17258e804",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Implement a function that reads and parses a CSV file containing floating-point numbers, ensuring proper cleanup of resources in case of exceptions.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let load filename = (* your code here *)",
+        "test_code": "\n            let () = \n                (* Create a sample CSV file for testing. *)\n                let filename = \"sample_data.csv\" in\n                let () = Out_channel.write_all filename ~data:\"1.0,2.0,3.0\\n4.0,5.0,6.0\" in\n                let result = load filename in\n                assert (result = [[1.0; 2.0; 3.0]; [4.0; 5.0; 6.0]]);\n                \n                (* Test error handling with a malformed CSV file. *)\n                let filename2 = \"malformed_data.csv\" in\n                let () = Out_channel.write_all filename2 ~data:\"1.0,2.0,abc\\n4.0,5.0,6.0\" in\n                assert (try \n                          let _ = load filename2 in \n                          false \n                       with _ -> true) \n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "b7a82adb-0efc-43c5-94dd-dd0fe7e06b26",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Implement a function using `Exn.protect` to safely read a list of lines from a file and parse each line into a list of floating-point numbers.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let parse_line line = (* your code here *) ;;",
+        "test_code": "\n            let () = \n                let lines = [\"1.0,2.0,3.0\"; \"4.0,5.0,6.0\"; \"7.0,eight,9.0\"] in\n                let filename = \"test_file.csv\" in\n                Out_channel.write_all filename ~data:(String.concat ~sep:\"\\n\" lines);\n                let result = load filename in\n                assert (result = [[1.0; 2.0; 3.0]; [4.0; 5.0; 6.0]]);\n                \n                (* Test handling of invalid line *) \n                assert (try \n                          let _ = load \"invalid_file.csv\" in \n                          false \n                       with _ -> true)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "7d4fa153-0f87-4aec-a62e-75ed96c1753a",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `exception` keyword in a match expression in OCaml?",
+        "choices": [
+            "To define a new exception type",
+            "To handle exceptions that may occur in the match expression",
+            "To propagate exceptions up the call stack",
+            "To define pattern match cases for constructor types"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "f3849942-7f8f-4071-a2af-1f909410698a",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "Why is it generally preferable to avoid relying on the identity of exceptions in OCaml?",
+        "choices": [
+            "The type system always warns about possible exceptions",
+            "Different functions may throw the same exception, making it ambiguous",
+            "It may lead to performance issues in runtime",
+            "It encourages poor code organization"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "54dff5d3-f580-4844-b13d-be885b82153c",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Implement a function that safely retrieves the weight of an element from an association list using a fallback.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let lookup_weight ~compute_weight alist key = (* your code here *)",
+        "test_code": "\n            let compute_double x = 2.0 *. float_of_int x in\n            let weights = [(\"apple\", 3); (\"banana\", 5); (\"cherry\", 4)] in\n            \n            let () = \n                assert (lookup_weight ~compute_weight:compute_double weights \"banana\" = 10.0);\n                assert (lookup_weight ~compute_weight:compute_double weights \"grape\" = 0.0);\n                assert (lookup_weight ~compute_weight:(fun _ -> raise (Invalid_argument \"test\")) weights \"apple\" = 6.0);\n                assert (lookup_weight ~compute_weight:compute_double weights \"cherry\" = 8.0)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "2af54f56-6e37-4186-a82a-99da6b6d9d4b",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Rewrite the lookup_weight function to use Base.List.Assoc.find instead of exceptions for a safer approach.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let lookup_weight ~compute_weight alist key = (* your code here *)",
+        "test_code": "\n            let compute_half x = 0.5 *. float_of_int x in\n            let weights = [(\"cat\", 8); (\"dog\", 20); (\"fish\", 1)] in\n            \n            let () = \n                assert (lookup_weight ~compute_weight:compute_half weights \"dog\" = 10.0);\n                assert (lookup_weight ~compute_weight:compute_half weights \"elephant\" = 0.0);\n                assert (lookup_weight ~compute_weight:(fun _ -> raise (Invalid_argument \"test\")) weights \"cat\" = 4.0);\n                assert (lookup_weight ~compute_weight:compute_half weights \"fish\" = 0.5)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "a82960f9-82d9-4f55-99f4-8569413b32d2",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "What is the purpose of using the Result type in OCaml?",
+        "choices": [
+            "To represent optional values without additional information",
+            "To represent computations that can fail with additional error information",
+            "To provide a mechanism for pattern matching on integers",
+            "To increase performance in computations"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "d949be42-0ef5-47bf-9415-70825e9b74be",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "How do you construct an Error value using the Result type?",
+        "choices": [
+            "Error(value)",
+            "Ok(value)",
+            "Result.Error(value)",
+            "Result.make_error(value)"
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "ce1e6d34-bab0-402d-958b-5e06727ea80e",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Implement a function `safe_divide` that performs division and returns a Result type indicating either success or failure. The failure should indicate division by zero.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_divide x y = (* your code here *)",
+        "test_code": "\n            let () = \n                match safe_divide 10 2 with\n                | Ok result -> assert (result = 5)\n                | Error msg -> assert false; (* There should be no error *)\n            \n                match safe_divide 10 0 with\n                | Ok result -> assert false; (* There should be an error *)\n                | Error msg -> assert (msg = \"Division by zero\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "efa9d4e1-a4af-4853-b7e4-deafa6b37d9b",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Create a function `find_value` which returns a Result type. It should search for an integer in a list and return Ok(value) if found or Error message if not found.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let find_value lst target = (* your code here *)",
+        "test_code": "\n            let () =\n                match find_value [1; 2; 3; 4] 3 with\n                | Ok value -> assert (value = 3)\n                | Error msg -> assert false; (* Should not be an error *)\n\n                match find_value [1; 2; 3; 4] 5 with\n                | Ok value -> assert false; (* Should not find value *)\n                | Error msg -> assert (msg = \"Value not found\")\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4ea70861-3ee3-452b-8d12-085de47e2457",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `Error.t` type in OCaml's Base library?",
+        "choices": [
+            "To represent successful computations",
+            "To provide a standard way of handling errors",
+            "To serialize data into JSON format",
+            "To dynamically type variables"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "06b54c96-642d-4ede-955c-b8b68d08e3a1",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "multiple_choice",
+        "question": "Which function can be used to catch exceptions in computations according to the Or_error module?",
+        "choices": [
+            "Or_error.catch",
+            "Or_error.try_with",
+            "Or_error.handle_exn",
+            "Or_error.safe_exec"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "86af7926-0ed5-4f6a-9b9a-6ac7e175226a",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "programming",
+        "question": "Implement a function that converts a string to a float, returning an `Or_error.t` type to handle potential parsing errors appropriately.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let float_of_string s = (* your code here *)",
+        "test_code": "\n            let () = \n                match float_of_string \"3.14\" with\n                | Base__.Result.Ok v -> assert (v = 3.14)\n                | Base__.Result.Error _ -> assert false;  (* Should not be an error *)\n                \n                match float_of_string \"invalid\" with\n                | Base__.Result.Ok _ -> assert false;  (* Should be an error *)\n                | Base__.Result.Error _ -> ()  (* Expected behavior for invalid input *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "fe38f5a0-9d9a-4b1c-8f8a-c70eca747e89",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "programming",
+        "question": "Create a function that takes a list of integers and returns an `Or_error.t` indicating whether the average can be calculated or if the list is empty.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let average lst = (* your code here *)",
+        "test_code": "\n            let () = \n                match average [1; 2; 3; 4] with\n                | Base__.Result.Ok v -> assert (v = 2.5)\n                | Base__.Result.Error _ -> assert false;  (* Should not be an error *)\n                \n                match average [] with\n                | Base__.Result.Ok _ -> assert false;  (* Should be an error *)\n                | Base__.Result.Error _ -> ()  (* Expected behavior for empty list *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "bcbc18b2-2e3a-46bc-b054-aa50e5a7240a",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "What is the primary purpose of the 'bind' function in OCaml's Option module?",
+        "choices": [
+            "To ignore errors in computations",
+            "To apply a function that may return an error to a value that may be present",
+            "To transform values without any error handling",
+            "To ensure that all function calls are executed regardless of errors"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "ce1f4f07-8015-4dd1-9276-c434f98a112b",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "How does the syntax extension 'Let_syntax' improve the usage of monadic binds?",
+        "choices": [
+            "It allows for direct error handling without using any bind functions",
+            "It makes the code look similar to regular let-bindings, improving readability",
+            "It increases the performance of monadic operations significantly",
+            "It eliminates the need for the Option module entirely"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "ed7e9a91-d1ef-4210-bd1a-f36876b3e813",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Implement a function `compute_bounds` that returns the smallest and largest elements in a list, using the 'bind' mechanism and ensuring to handle possibly empty lists.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let compute_bounds ~compare list = (* your code here *)",
+        "test_code": "\n            let compare_ints a b = Int.compare a b in\n            let test_compute_bounds () =\n              assert (compute_bounds ~compare:compare_ints [3; 1; 4; 1; 5; 9] = Some (1, 9));\n              assert (compute_bounds ~compare:compare_ints [] = None);\n              assert (compute_bounds ~compare:compare_ints [7] = Some (7, 7))\n            in\n            test_compute_bounds ()\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "08eaf990-39aa-41b9-a99a-101e12b97ad3",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Refactor the `compute_bounds` function using the 'Option.both' function to simplify the error handling in obtaining both the first and last elements of a sorted list.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let compute_bounds ~compare list = (* your code here *)",
+        "test_code": "\n            let compare_ints a b = Int.compare a b in\n            let test_compute_bounds () =\n              assert (compute_bounds ~compare:compare_ints [2; 5; 8; 4; 7] = Some (2, 8));\n              assert (compute_bounds ~compare:compare_ints [] = None);\n              assert (compute_bounds ~compare:compare_ints [6] = Some (6, 6))\n            in\n            test_compute_bounds ()\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "23c30f06-728e-46b1-9ba2-0943a59aa9d2",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What happens when an assertion fails in OCaml using the `assert` directive?",
+        "choices": [
+            "It raises a `Failure` exception.",
+            "It captures the line number and character offset of the failure.",
+            "It returns `None` immediately.",
+            "It continues executing the rest of the program."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "06490421-2119-4f7b-ac49-1e45d30f59e1",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the return type of the `merge_lists` function when the two input lists have different lengths?",
+        "choices": [
+            "A list of merged elements.",
+            "An exception is raised.",
+            "None.",
+            "A tuple containing the two lists."
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "f04ce660-1ee1-4a4b-818e-069351bf2bf6",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Implement a function that merges two lists using a provided function, raising an exception if the lists are of different lengths.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let merge_lists xs ys ~f = (* your code here *)",
+        "test_code": "\n            let () = \n                match merge_lists [1; 2; 3] [-1; 1; 2] ~f:(+) with\n                | Some result -> assert (result = [0; 3; 5])\n                | None -> assert false;\n                \n                match merge_lists [1; 2] [3; 4; 5] ~f:(+) with\n                | Some _ -> assert false\n                | None -> ();  (* This should pass, as lengths are different *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "e351a375-6fd4-4e9a-8581-a58304f81cc8",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Write a safe version of `merge_lists` that includes an optional parameter to control the behavior when the lengths of the lists do not match.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_merge_lists xs ys ~f ?(allow_different_lengths=false) = (* your code here *)",
+        "test_code": "\n            let () = \n                match safe_merge_lists [1; 2; 3] [-1; 1; 2] ~f:(+) with\n                | Some result -> assert (result = [0; 3; 5])\n                | None -> assert false;\n                \n                match safe_merge_lists [1; 2] [3; 4; 5] ~f:(+) ~allow_different_lengths:true with\n                | Some result -> assert (result = [4; 6])\n                | None -> assert false;\n                \n                match safe_merge_lists [1; 2] [3; 4; 5] ~f:(+) with\n                | Some _ -> assert false\n                | None -> ();  (* This should pass unless allow_different_lengths is true *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "e657f243-1be6-471d-a3dc-a651af4e6b94",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `Exn.protect` function in OCaml?",
+        "choices": [
+            "To handle exceptions without terminating the program",
+            "To ensure resources are cleaned up after executing a function regardless of exceptions",
+            "To safely call functions that may return None",
+            "To define a function that provides access to exception details"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "3a96b937-5cbe-4026-b040-b6c250c1c392",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What does the `In_channel.with_file` function do?",
+        "choices": [
+            "It opens a file for reading and ensures it is closed afterward",
+            "It reads the entire contents of a file into a string",
+            "It allows for writing into a file safely",
+            "It creates a new file if it does not exist"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "bdf7ee50-f102-4cf5-9539-a686c67ff3cc",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Implement a function that reads a CSV file and returns a list of lists of floats. It should handle exceptions gracefully to avoid leaks of file descriptors.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let load_csv filename = (* your code here *)",
+        "test_code": "\n            let () =\n              (* Assume 'data.csv' contains valid data for the test *)\n              let result = load_csv \"data.csv\" in\n              assert (result = [[1.0; 2.0; 3.0]; [4.0; 5.0; 6.0]]);\n              (* Test with a malformed file to ensure it handles exceptions without leaks *)\n              let _ = load_csv \"baddata.csv\" in\n              assert (List.length result = 2)  (* Should not affect previous valid load *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "ea742d45-483e-459e-9eae-84b1335213e1",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Write a function that reads from a file line by line, parsing each line into a float list while ensuring that the file is closed after reading, even in the event of an exception.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let read_floats_from_file filename = (* your code here *)",
+        "test_code": "\n            let () =\n              (* Test with a properly formatted file *)\n              let result = read_floats_from_file \"numbers.txt\" in\n              assert (result = [[1.0; 2.0]; [3.0; 4.0]]);\n              (* Check that the file closes even after encountering malformed data *)\n              let _ = read_floats_from_file \"malformed.txt\" in\n              assert (true)  (* No exceptions should occur here due to cleanup *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4358e672-7a67-48c6-b169-f711caeb5516",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the consequence of using exceptions in the original `lookup_weight` function?",
+        "choices": [
+            "All exceptions are handled properly",
+            "Key_not_found exceptions prevent other exceptions from propagating",
+            "The function always returns a floating-point weight",
+            "It utilizes the type system effectively"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "04966ddf-5e0b-49e6-91e9-520f6ccfc42e",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "Which OCaml function provides a way to avoid using exceptions entirely in the lookup process?",
+        "choices": [
+            "find_exn",
+            "lookup_weight",
+            "List.Assoc.find",
+            "Base.List.Assoc.find"
+        ],
+        "correct_answers": [
+            3
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "22949bda-2af7-4069-b960-c9a9c5a867e8",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Implement a function `safe_lookup_weight` which returns a floating-point weight or zero depending on whether the key exists in the association list without using exceptions.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_lookup_weight ~compute_weight alist key = (* your code here *)",
+        "test_code": "\n            let compute_w x = float_of_int x *. 2.0\n\n            let () = \n                assert (safe_lookup_weight ~compute_weight:compute_w [(\"a\", 3); (\"b\", 4)] \"a\" = 6.0);\n                assert (safe_lookup_weight ~compute_weight:compute_w [(\"a\", 3); (\"b\", 4)] \"c\" = 0.);\n                assert (safe_lookup_weight ~compute_weight:compute_w [] \"a\" = 0.)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "e04c402f-ef4f-4980-a22a-8d146ae6fa9a",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Write a function `lookup_weight_with_exceptions` that correctly handles the `Key_not_found` exception and propagates other exceptions from the `compute_weight` function.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let lookup_weight_with_exceptions ~compute_weight alist key = (* your code here *)",
+        "test_code": "\n            let compute_w x = \n                if x <= 0 then raise (Invalid_argument \"Negative weight\") else float_of_int x *. 2.0\n\n            let () = \n                assert (lookup_weight_with_exceptions ~compute_weight:compute_w [(\"a\", 3); (\"b\", 4)] \"a\" = 6.0);\n                assert (lookup_weight_with_exceptions ~compute_weight:compute_w [(\"a\", 3); (\"b\", 4)] \"c\" = 0.);\n                try \n                    let _ = lookup_weight_with_exceptions ~compute_weight:compute_w [(\"a\", -1); (\"b\", 4)] \"a\" in\n                    assert false  (* Should raise an exception *)\n                with Invalid_argument _ -> ()\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "8b0de18e-03e6-4180-a0d1-6bae71d52317",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "multiple_choice",
+        "question": "What is the main trade-off when choosing between exceptions and error-aware return types in OCaml?",
+        "choices": [
+            "Exceptions are always preferred over error-aware return types.",
+            "Error-aware return types are more concise than exceptions.",
+            "Exceptions allow for deferred error handling but can be ignored, while error-aware types make errors explicit.",
+            "Error-aware return types are always easier to implement than exceptions."
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "53665539-1c15-4bfa-90dd-cf0caf776286",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "multiple_choice",
+        "question": "In which scenario is it advisable to use exceptions in OCaml?",
+        "choices": [
+            "When writing production software where failure costs a lot.",
+            "When writing quick and experimental programs where failure is not costly.",
+            "When all errors must be caught and handled at compile time.",
+            "When you have control over the stack and can predict all exceptions."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "679c032d-1043-4041-bae4-7c9c73b50091",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "programming",
+        "question": "Implement a function that takes a division operation that may fail and returns an error-aware result in OCaml.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "type division_result = | Success of float | Division_by_zero | Invalid_input;\nlet safe_divide num denom = (* your code here *)",
+        "test_code": "\n            let () = \n                match safe_divide 10.0 2.0 with\n                | Success result -> assert (result = 5.0)\n                | _ -> assert false;\n\n                match safe_divide 10.0 0.0 with\n                | Division_by_zero -> ()\n                | _ -> assert false;\n\n                match safe_divide 10.0 (-2.0) with\n                | Success result -> assert (result = -5.0)\n                | _ -> assert false\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "a5772d10-216e-45c5-b19b-92d3d9b438a8",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "programming",
+        "question": "Create a function that reads a file and returns an error-aware result indicating success or the type of failure.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "type file_result = | File_content of string | File_not_found | Read_error;\nlet read_file path = (* your code here *)",
+        "test_code": "\n            let () = \n                match read_file \"existing_file.txt\" with\n                | File_content content -> assert (content <> \"\")\n                | _ -> assert false;\n\n                match read_file \"non_existent_file.txt\" with\n                | File_not_found -> ()\n                | _ -> assert false;\n                \n                (* For testing Read_error, create a scenario where read_file fails with a read error if possible *)\n        ",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "3f640486-0101-433c-8003-257c7dc2302a",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the Result module in OCaml?",
+        "choices": [
+            "To represent optional values that may or may not exist",
+            "To signal errors in computations with additional information",
+            "To provide a way to manage mutable state",
+            "To optimize memory usage in recursive functions"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "0e2abccb-4e7d-4d42-877b-d4f2a20ba704",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "multiple_choice",
+        "question": "How does the bind function in the Option module behave when given None?",
+        "choices": [
+            "It throws an exception.",
+            "It calls the provided function with None.",
+            "It returns None without calling the function.",
+            "It chains to the next option."
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "829082b1-404e-413b-989b-102d2c9b38da",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "programming",
+        "question": "Implement a function `compute_bounds` that calculates the smallest and largest elements of a list, returning them as an option type. Handle the case of an empty list properly.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let compute_bounds ~compare list = (* your code here *)",
+        "test_code": "let () = \n    assert (compute_bounds ~compare:Int.compare [3;1;2] = Some (1,3));\n    assert (compute_bounds ~compare:Int.compare [] = None);",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "89a2a833-b252-4180-ae16-93c562d083d0",
+        "chapter": "error-handling",
+        "section": "Error-Aware Return Types",
+        "type": "programming",
+        "question": "Write a function `find_mismatches` that identifies keys from two hash tables that have different associated values. The function should return a list of mismatched keys.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let find_mismatches table1 table2 = (* your code here *)",
+        "test_code": "let () = \n  let table1 = Hashtbl.Poly.create () in\n  let table2 = Hashtbl.Poly.create () in\n  Hashtbl.add_exn table1 ~key:\"a\" ~data:1;\n  Hashtbl.add_exn table1 ~key:\"b\" ~data:2;\n  Hashtbl.add_exn table2 ~key:\"a\" ~data:1;\n  Hashtbl.add_exn table2 ~key:\"b\" ~data:3;\n\n  assert (find_mismatches table1 table2 = [\"b\"]);",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "6ae5e146-95c6-4376-abdd-2da08ac8c437",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the Result type in OCaml?",
+        "choices": [
+            "To represent optional values",
+            "To handle successful and error cases in function results",
+            "To encapsulate mutable state",
+            "To define custom data structures"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "bc2f5c7e-69a8-4af4-8078-1a7936eef10d",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "multiple_choice",
+        "question": "Which of the following constructors is NOT part of the Result type?",
+        "choices": [
+            "Ok",
+            "Error",
+            "None",
+            "Some"
+        ],
+        "correct_answers": [
+            2,
+            3
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "0876734b-6957-4b7f-a8e4-f881adc49e97",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Implement a function that safely divides two integers, returning a Result type indicating success or failure.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_divide x y = (* your code here *)",
+        "test_code": "\nlet () = \n    assert (safe_divide 10 2 = Ok 5);\n    assert (safe_divide 10 0 = Error \"Division by zero\")\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "74a9e660-6f0c-46f0-9264-18af3f462424",
+        "chapter": "error-handling",
+        "section": "Encoding Errors with Result",
+        "type": "programming",
+        "question": "Create a function that processes a list of Results, returning a list of Ok values while ignoring Errors.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let filter_ok results = (* your code here *)",
+        "test_code": "let () = \n    assert (filter_ok [Ok 1; Error \"fail\"; Ok 2] = [1; 2])\n    assert (filter_ok [Error \"fail\"; Error \"fail\"] = [])",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "3cc324a0-ece5-4d42-a5aa-36af410c4b93",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "multiple_choice",
+        "question": "What is the primary role of the `Or_error` module in OCaml?",
+        "choices": [
+            "To handle exceptions that arise from computations",
+            "To create and manage errors in a structured way",
+            "To convert values to their string representations",
+            "To initiate computations in a safe manner"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "c0d7ef48-3340-4eb5-a5a8-70a7046254c9",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "multiple_choice",
+        "question": "How can one create a specialized error type using the `Error` module?",
+        "choices": [
+            "By using standard string representations",
+            "By using S-expressions to encode structured error data",
+            "By throwing exceptions directly without using a type",
+            "By using a built-in list of predefined errors"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "cd5dc284-0d1d-411a-989e-a30cec9376b3",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "programming",
+        "question": "Implement a function that parses a string to a float and wraps the result in an `Or_error.t`. If the conversion fails, it should return a specific error message.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let float_of_string_with_error s = (* your code here *)",
+        "test_code": "\nlet () = \n    match float_of_string_with_error \"3.14\" with\n    | Ok v -> assert (v = 3.14)\n    | Error e -> failwith e;\n    match float_of_string_with_error \"not a float\" with\n    | Ok v -> failwith \"Expected an error\"\n    | Error e -> assert (e = \"Invalid float format\")",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "71d672f4-c13d-4129-b42a-daa7109b6a10",
+        "chapter": "error-handling",
+        "section": "Error and Or_error",
+        "type": "programming",
+        "question": "Write a function that combines multiple errors into a single `Error.t` using the `Error.tag` function. This function should accept a list of error messages and a tag, then return a combined error.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let combine_errors errors tag = (* your code here *)",
+        "test_code": "\nlet () = \n    let combined = combine_errors [Error.of_string \"Error 1\"; Error.of_string \"Error 2\"] \"Batch Processing\" in\n    match combined with\n    | Error t -> assert (t = \"Batch Processing Error 1 Error 2\")\n    | _ -> failwith \"Expected an Error.t\"",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4149a47f-67f2-4552-8cc3-04d585cfb984",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "What is the primary function of `bind` in the context of error handling in OCaml?",
+        "choices": [
+            "To sequence multiple computations while handling errors",
+            "To transform a list into a tuple",
+            "To compare two values and return an option type",
+            "To sort a list of elements"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "c436b133-0a90-44d6-9f4f-80806c20169a",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `Option.both` function in OCaml?",
+        "choices": [
+            "To check if both options are `Some` and return them as a pair",
+            "To merge two option types into one",
+            "To apply a function to both options",
+            "To handle errors in a recursive manner"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "a7a9a23a-7149-4ddf-80dc-c7213e619e37",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Implement a function that computes the bounds (minimum and maximum) of a list of integers using the `bind` idiom for error handling.",
+        "choices": [
+            "To compute bounds using only standard pattern matching",
+            "To use `Option.both` to simplify the implementation",
+            "To sort the list first and then find the head and tail",
+            "To use List.map instead of standard functions"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "let compute_bounds ~compare list = (* your code here *)",
+        "test_code": "let () = \n    assert (compute_bounds ~compare:Int.compare [3; 1; 4; 2] = Some (1, 4));\n    assert (compute_bounds ~compare:Int.compare [] = None);",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "fb2ca33f-833c-4778-af48-1f1830150b82",
+        "chapter": "error-handling",
+        "section": "bindand Other Error Handling Idioms",
+        "type": "programming",
+        "question": "Implement a function that returns the first and last elements of a sorted list, using the `Let_syntax` extension for clearer binding.",
+        "choices": [
+            "To directly match and destructure the option types",
+            "To avoid using monadic binds completely",
+            "To handle multiple optional values more intuitively",
+            "To sort the list after finding the first element"
+        ],
+        "correct_answers": [
+            2
+        ],
+        "starter_code": "let compute_bounds ~compare list = (* your implementation here *)",
+        "test_code": "let () = \n    assert (compute_bounds ~compare:Int.compare [3; 1; 4; 2] = Some (1, 4));\n    assert (compute_bounds ~compare:Int.compare [] = None);\n    assert (compute_bounds ~compare:Int.compare [10; 20; 30] = Some (10, 30));",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "97d3fe22-19ed-44db-a332-8ec0f61f7fc4",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "multiple_choice",
+        "question": "What is a consequence of using an assertion in OCaml?",
+        "choices": [
+            "Assertions can be ignored in production code.",
+            "Assertions capture the state of the program at the point of failure.",
+            "Assertions always return true.",
+            "Assertions can be used to handle exceptions."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "0dc3580b-51bd-453a-b128-6e61c2f24558",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "multiple_choice",
+        "question": "What does the function `Option.try_with` do in OCaml?",
+        "choices": [
+            "It runs a computation and captures any exceptions as an option.",
+            "It ignores exceptions and returns a default value.",
+            "It allows multiple exception types to be handled.",
+            "It throws exceptions without any checks."
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "cac32248-98ee-40bb-a1f0-7d5ccd138a03",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "programming",
+        "question": "Implement a function that safely parses a line from a file, returning either a parsed value or an exception.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_parse_line line = (* your code here *)",
+        "test_code": "let () =\n  assert (safe_parse_line \"valid,line\" = Ok [valid; line]);\n  match safe_parse_line \"invalid,line\" with\n  | Error _ -> ()\n  | _ -> assert false",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "fad3e010-17e6-4cae-b05d-66f1364dffef",
+        "chapter": "error-handling",
+        "section": "Exceptions",
+        "type": "programming",
+        "question": "Write a function that finds an element in an association list. If the element is not found, it should use an exception to indicate the error.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "exception Not_found_in_assoc\n\nlet find_in_assoc alist key = (* your code here *)",
+        "test_code": "let () =\n  assert (find_in_assoc [(\"a\", 1); (\"b\", 2)] \"a\" = 1);\n  try\n    find_in_assoc [(\"a\", 1); (\"b\", 2)] \"c\"\n  with Not_found_in_assoc -> ()",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "378b068b-02e1-402c-9eb5-92858390fb5b",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What function is used in OCaml to throw an exception with a specified message?",
+        "choices": [
+            "raise",
+            "failwith",
+            "assert",
+            "handle_exception"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "8458cef4-6880-462c-8741-902275c5c587",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "multiple_choice",
+        "question": "What will happen if the assertion in the 'merge_lists' function is triggered?",
+        "choices": [
+            "The program terminates silently",
+            "An exception is raised",
+            "A warning is displayed",
+            "The function returns None"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "55ce8549-0b47-4be2-8769-8870cb95a43e",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Implement a function that zips together two lists using a provided function, with exception handling for different list lengths.",
+        "choices": [
+            "Merge lists",
+            "Zip lists",
+            "Combine lists",
+            "Join lists"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "let merge_lists xs ys ~f = (* your code here *)",
+        "test_code": "let () = \n    assert (merge_lists [1; 2; 3] [-1; 1; 2] ~f:(+) = Some [0; 3; 5]);\n    assert (merge_lists [1; 2; 3] [-1; 1] ~f:(+) = None)",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "9649bdeb-7090-4d95-b5bd-09a40cb027cd",
+        "chapter": "error-handling",
+        "section": "Helper Functions for Throwing Exceptions",
+        "type": "programming",
+        "question": "Write a function that safely merges two lists, raising an exception if they are of unequal lengths.",
+        "choices": [
+            "Safe merge",
+            "Assert merge",
+            "Length-checked merge",
+            "Equal-length merge"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "let safe_merge xs ys = (* your code here *)",
+        "test_code": "let () = \n    assert (safe_merge [1; 2] [3; 4] = Some [1; 3; 2; 4]);\n    try \n        let _ = safe_merge [1; 2] [3] in \n        assert false\n    with \n        | Failure _ -> ()",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "dd94535f-c34d-4c34-9532-d2af6d8d92f8",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "multiple_choice",
+        "question": "What is the purpose of a `try/with` block in OCaml?",
+        "choices": [
+            "To handle exceptions and recover from them",
+            "To create threads for concurrent execution",
+            "To define recursive functions",
+            "To optimize function performance"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "2c4b505d-8d06-4ffe-adb9-2e0e219bb752",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "multiple_choice",
+        "question": "What happens if an exception thrown in a `try/with` block does not match any provided patterns?",
+        "choices": [
+            "It is handled by the nearest outer `try/with`",
+            "It crashes the program immediately",
+            "It gets ignored silently",
+            "It is logged for debugging purposes"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "23467f7b-0f8c-49f3-9588-5af48fc4e50b",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "programming",
+        "question": "Implement a function that divides two integers and handles division by zero using a `try/with` block.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_divide a b = (* your code here *)",
+        "test_code": "let () = \n    assert (safe_divide 10 2 = Ok 5);\n    assert (safe_divide 10 0 = Error \"Division by zero\");",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4fef0d0d-2678-42bf-b1ca-40a536523d28",
+        "chapter": "error-handling",
+        "section": "Exception Handlers",
+        "type": "programming",
+        "question": "Implement a function to parse an integer from a string using `try/with` to catch invalid format exceptions.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let parse_int str = (* your code here *)",
+        "test_code": "let () = \n    assert (parse_int \"123\" = Ok 123);\n    assert (parse_int \"abc\" = Error \"Invalid integer format\");",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4932fbff-07eb-4794-8817-e08c3dca8f28",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the `Exn.protect` function in OCaml?",
+        "choices": [
+            "To ensure resource cleanup after an operation, regardless of success or failure",
+            "To catch all exceptions within the function",
+            "To protect the entire execution of a program",
+            "To automatically load file content into a variable"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "30ab99bf-b5fd-492d-ae1d-af49ebb07787",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "multiple_choice",
+        "question": "What issue does the `load` function face without the use of `Exn.protect`?",
+        "choices": [
+            "It fails to read files larger than a certain size",
+            "It can lead to a file-descriptor leak if an exception occurs",
+            "It does not parse floating point numbers correctly",
+            "It requires the user to handle exceptions manually"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "0b0eac4f-4b0a-4a68-9b89-1aa349e9b726",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Implement a function that safely loads a comma-separated values (CSV) file and parses it into a list of float lists. Use `Exn.protect` to handle exceptions and ensure the file is closed properly.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let load filename = (* your code here *)",
+        "test_code": "let () =\n  let result = load \"data.csv\" in\n  assert (result = [[1.0; 2.0; 3.0]; [4.0; 5.0; 6.0]])",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4d048238-aaa5-48d0-8737-992ba0d2cc45",
+        "chapter": "error-handling",
+        "section": "Cleaning Up in the Presence of Exceptions",
+        "type": "programming",
+        "question": "Write a function to safely read multiple lines from a CSV file, ensuring that it can handle malformed lines gracefully without leaving any file descriptors open. Use `In_channel.with_file` in the implementation.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let read_csv filename = (* your code here *)",
+        "test_code": "let () =\n  let result = read_csv \"data_malformed.csv\" in\n  assert (result = [[1.0; 2.0]; [3.0; -4.0]])",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "775ee656-a931-409f-a189-4e30ca9cd75e",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "What is the purpose of the 'Key_not_found' exception in OCaml's exception handling?",
+        "choices": [
+            "To indicate a missing key in an association list",
+            "To signify a runtime type error",
+            "To denote that a function received invalid arguments",
+            "To handle division by zero"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "218391f7-9d4f-41aa-ba2a-21f3e68d5fe2",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "multiple_choice",
+        "question": "What is a better alternative to using exceptions in the implementation of 'lookup_weight'?",
+        "choices": [
+            "Using List.Assoc.find to avoid exceptions",
+            "Returning a tuple instead of a float",
+            "Throwing a different exception",
+            "Using global variables"
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "f5a1bd4b-5604-4ee6-8f4f-fa4c99e0078d",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Implement the 'lookup_weight' function in OCaml using List.Assoc.find that computes a weight for a given key, returning 0 for missing keys.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let lookup_weight ~compute_weight alist key = (* your code here *)",
+        "test_code": "\nlet compute_weight x = float_of_int x;\nlet () = \n  assert (lookup_weight ~compute_weight:[\"a\", 3; \"b\", 4] \"a\" = 3.);\n  assert (lookup_weight ~compute_weight:[\"a\", 3; \"b\", 4] \"c\" = 0.)",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "4efb9f34-6013-4854-8d08-ebe14b3699c7",
+        "chapter": "error-handling",
+        "section": "Catching Specific Exceptions",
+        "type": "programming",
+        "question": "Refactor the 'lookup_weight' function to handle exceptions more elegantly, returning a default weight when exceptions occur during computation.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let lookup_weight ~compute_weight alist key = (* your code here *)",
+        "test_code": "\nlet compute_weight_exception x = if x < 0 then raise (Key_not_found \"invalid\") else float_of_int x;\nlet () = \n  assert (lookup_weight ~compute_weight:compute_weight_exception [\"a\", 3; \"b\", 4] \"a\" = 3.);\n  assert (lookup_weight ~compute_weight:compute_weight_exception [\"a\", 3; \"b\", 4] \"b\" = 4.)",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "6bdd92ce-df2d-4b4b-9e28-109a60227d31",
+        "chapter": "error-handling",
+        "section": "Backtraces",
+        "type": "multiple_choice",
+        "question": "What happens when you raise an exception in OCaml without using `raise_notrace`?",
+        "choices": [
+            "The exception is raised without additional overhead.",
+            "It captures a backtrace for debugging.",
+            "It accelerates the exception handling process.",
+            "It disables all error reporting."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "377a94ce-8033-4d9f-8e16-34789ab2f40e",
+        "chapter": "error-handling",
+        "section": "Backtraces",
+        "type": "multiple_choice",
+        "question": "What is the effect of setting `OCAMLRUNPARAM=b=0`?",
+        "choices": [
+            "It increases the verbosity of stack traces.",
+            "It disables backtraces, making exceptions faster.",
+            "It provides additional debugging information.",
+            "It enables the collection of more metrics."
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "12c52083-12ca-4c85-8291-e25a31a8802c",
+        "chapter": "error-handling",
+        "section": "Backtraces",
+        "type": "programming",
+        "question": "Implement a function that safely computes the maximum of a list, raising an exception if the list is empty and returning None if the max is computed.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_list_max lst = (* your code here *)",
+        "test_code": "\nlet () = \n    assert (safe_list_max [1; 4; 2; 3] = Some 4);\n    assert (safe_list_max [] = None);\n    assert (safe_list_max [-1; -5; -3] = Some -1);\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "f5670e89-397e-4c00-8043-1d6375042bec",
+        "chapter": "error-handling",
+        "section": "Backtraces",
+        "type": "programming",
+        "question": "Create a function that calculates the time taken to execute a function that may raise an exception with different exception handling approaches.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let benchmark_with_exceptions () = (* your code here *)",
+        "test_code": "\nlet () = \n    let time_normal = benchmark_with_exceptions () in\n    let time_no_backtrace = benchmark_with_exceptions () in\n    printf \"Normal: %f ns, No backtrace: %f ns\\n\" time_normal time_no_backtrace;\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "604dbc44-89f9-4eea-bb02-277cc38eebd8",
+        "chapter": "error-handling",
+        "section": "From Exceptions to Error-Aware Types and Back Again",
+        "type": "multiple_choice",
+        "question": "What purpose does the `Option.try_with` function serve in OCaml?",
+        "choices": [
+            "It converts exceptions to option types.",
+            "It automatically handles all exceptions in OCaml.",
+            "It throws an exception if the function fails.",
+            "It checks if a value is an option type."
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "742a58d7-2d17-41a7-977a-dd2826f13ba1",
+        "chapter": "error-handling",
+        "section": "From Exceptions to Error-Aware Types and Back Again",
+        "type": "multiple_choice",
+        "question": "How does the `Or_error.try_with` function differ from `Option.try_with` in OCaml?",
+        "choices": [
+            "Or_error propagates errors with descriptive messages.",
+            "Option returns a value directly rather than an error message.",
+            "Or_error does not catch exceptions.",
+            "There is no difference; they are identical."
+        ],
+        "correct_answers": [
+            0
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "86027648-8027-4763-b794-4dfaf8d5557a",
+        "chapter": "error-handling",
+        "section": "From Exceptions to Error-Aware Types and Back Again",
+        "type": "programming",
+        "question": "Implement a function that safely retrieves a value from a list of (key, value) pairs using error-aware types.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let find_safe alist key = (* your code here *)",
+        "test_code": "\nlet () = \n    assert (Or_error.is_ok (find_safe [\"a\",1; \"b\",2] \"b\"));\n    assert (Or_error.is_error (find_safe [\"a\",1; \"b\",2] \"c\"));\n    assert (Or_error.value_exn (find_safe [\"a\",1; \"b\",2] \"b\") = 2)\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "9659cbf5-fb5a-4853-9c4d-d4e6adf02959",
+        "chapter": "error-handling",
+        "section": "From Exceptions to Error-Aware Types and Back Again",
+        "type": "programming",
+        "question": "Write a function that throws an exception if the key is not found in a list or returns a value using `Option.try_with`.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let find_with_exn alist key = (* your code here *)",
+        "test_code": "\nlet () = \n    assert (find_with_exn [\"x\", 10; \"y\", 20] \"x\" = 10);\n    assert (try let _ = find_with_exn [\"x\", 10; \"y\", 20] \"z\" in false with | Not_found -> true)\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "94356609-5ca7-464d-8c40-0894c3519a04",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "multiple_choice",
+        "question": "What is a key trade-off when choosing between exceptions and error-aware return types in OCaml?",
+        "choices": [
+            "Performance vs Safety",
+            "Concision vs Explicitness",
+            "Simplicity vs Complexity",
+            "Speed vs Accuracy"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "3c5984b0-cd54-426c-a4c2-c35bf866bfa0",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "multiple_choice",
+        "question": "In which scenario should you consider using error-aware return types over exceptions?",
+        "choices": [
+            "When writing quick scripts where performance is key",
+            "When the cost of failure is high in production software",
+            "When errors are rare and exceptional",
+            "When you want to reduce the verbosity of code"
+        ],
+        "correct_answers": [
+            1
+        ],
+        "starter_code": "",
+        "test_code": "",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "5605b2dc-0eed-43f4-ba8c-f80f5d2e5e5d",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "programming",
+        "question": "Implement a function that divides two integers, returning an option type to handle division by zero.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let safe_divide num denom = (* your code here *)",
+        "test_code": "let () = \n    assert (safe_divide 10 2 = Some 5);\n    assert (safe_divide 10 0 = None)\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    },
+    {
+        "id": "a2525120-2e54-4bdf-ac18-db77b200770c",
+        "chapter": "error-handling",
+        "section": "Choosing an Error-Handling Strategy",
+        "type": "programming",
+        "question": "Implement a function that reads a file and returns its contents as a string. Use error-aware return types for file-not-found errors.",
+        "choices": [],
+        "correct_answers": [],
+        "starter_code": "let read_file file_path = (* your code here *)",
+        "test_code": "let () = \n    match read_file \"existing_file.txt\" with\n    | Ok content -> assert (String.length content > 0)\n    | Error _ -> assert false;\n    assert (read_file \"non_existing_file.txt\" = Error \"File not found\")\n",
+        "metadata": {
+            "num_solves": 0,
+            "is_deactivated": false,
+            "quality_score": 5
+        }
+    }
+]
