@@ -12,7 +12,7 @@
 
 /* Label indicating it's a quiz question */
 .quiz-container::before {
-    content: "Camel Quiz (Beta)";
+    content: "CAMEL QUIZ (Beta) 🐪";
     position: absolute;
     top: -12px;
     left: 20px;
@@ -54,23 +54,38 @@
     font-size: 1em;
 }
 
-/* Style when hovering over a choice */
-.quiz-choice:hover {
-    border-color: #800080; /* Highlight border */
-    background-color: #eeeafc; /* Slight purple tint */
-}
-
-/* Active state for selected choice */
-.quiz-choice input[type="radio"]:checked + label {
-    background-color: #800080;
-    color: white;
+.quiz-choice.selected {
+    background-color: #961a96; /* Purple background */
+    color: white; /* White text */
     border-color: #800080;
-    border-radius: 5px;
+    cursor: pointer;
 }
 
-/* Hide the default radio button */
-.quiz-choice input[type="radio"] {
-    display: none;
+/* On hover, if not selected */
+.quiz-choice:not(.selected):hover {
+    background-color: #eeeafc; /* Light purple hover */
+    cursor: pointer;
+}
+
+/* Error state for the submit button */
+.quiz-submit-button.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+
+/* Success state */
+.quiz-submit-button.success {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+/* Failure state */
+.quiz-submit-button.failure {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
 }
 
 /* Label styling for choices */

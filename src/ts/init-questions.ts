@@ -66,36 +66,67 @@ function createQuizContainer(props: QuizContainerProps, section: HTMLElement, mo
         const choicesContainer = document.createElement("div");
         choicesContainer.className = "quiz-choices";
 
+        const selectedChoices: Set<number> = new Set();
+
         props.question.choices.forEach((choice, index) => {
             const choiceElement = document.createElement("div");
             choiceElement.className = "quiz-choice";
+            choiceElement.innerText = choice;
 
-            const radioInput = document.createElement("input");
-            radioInput.type = "radio";
-            radioInput.name = `quiz-${props.question.id}`;
-            radioInput.value = index.toString();
+            // Handle click on a choice
+            choiceElement.onclick = () => {
+                if (props.question.correct_answers.length === 1) {
+                    // If only one correct answer, deselect all other choices
+                    Array.from(choicesContainer.children).forEach((child) =>
+                        child.classList.remove("selected")
+                    );
+                    selectedChoices.clear();
+                }
 
-            const label = document.createElement("label");
-            label.innerText = choice;
+                // Toggle selection for the current choice
+                if (selectedChoices.has(index)) {
+                    selectedChoices.delete(index);
+                    choiceElement.classList.remove("selected");
+                } else {
+                    selectedChoices.add(index);
+                    choiceElement.classList.add("selected");
+                }
+            };
 
-            choiceElement.appendChild(radioInput);
-            choiceElement.appendChild(label);
             choicesContainer.appendChild(choiceElement);
         });
 
         container.appendChild(choicesContainer);
 
+        // Submit button
         const submitButton = document.createElement("button");
         submitButton.className = "quiz-submit-button";
         submitButton.innerText = "Submit";
+
+        // Handle submit click
         submitButton.onclick = () => {
-            const selected = choicesContainer.querySelector<HTMLInputElement>("input:checked");
-            if (!selected) {
-                alert("Please select an option");
+            if (selectedChoices.size === 0) {
+                // Add an error class for missing selection
+                submitButton.classList.add("error");
+                submitButton.innerText = "Please select an option!";
+                setTimeout(() => {
+                    submitButton.classList.remove("error");
+                    submitButton.innerText = "Submit";
+                }, 2000);
                 return;
             }
-            const isCorrect = props.question.correct_answers.includes(Number(selected.value));
-            props.onSubmit(isCorrect, isCorrect ? "Correct!" : "Incorrect, try again.");
+
+            const isCorrect = Array.from(selectedChoices).every((index) =>
+                props.question.correct_answers.includes(index)
+            ) && selectedChoices.size === props.question.correct_answers.length;
+
+            if (isCorrect) {
+                submitButton.classList.add("success");
+                submitButton.innerText = "Correct!";
+            } else {
+                submitButton.classList.add("failure");
+                submitButton.innerText = "Incorrect, try again!";
+            }
         };
 
         container.appendChild(submitButton);
