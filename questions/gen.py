@@ -1,8 +1,29 @@
 import requests
 from bs4 import BeautifulSoup
 from openai import OpenAI
+from pydantic import BaseModel
+from typing import List, Optional
 import json
 import os
+import uuid
+
+CANDIDATE_FILE = 'candidate.json'
+SCRATCH_FILE = 'scratch.json'
+
+def read_json_file(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    else:
+        return []
+
+def write_json_file(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+def append_to_file(file_path, data):
+    with open(file_path, 'a') as file:
+        file.write('\n\n\n'+data)
 
 def get_chapter_content(chapter_name):
     url = f'https://dev.realworldocaml.org/{chapter_name}.html'
@@ -28,6 +49,19 @@ def extract_sections(chapter_html):
             })
     
     return sections
+
+class Question(BaseModel):
+    type: str
+    question: str
+    choices: Optional[List[str]]
+    correct_answers: Optional[List[int]]
+    starter_code: Optional[str]
+    test_code: Optional[str]
+    section: str
+    chapter: str
+
+class Questions(BaseModel):
+    questions: List[Question]
 
 # Function to generate questions from GPT-4
 def generate_questions_from_gpt(section_title, section_content):
@@ -99,41 +133,35 @@ def generate_questions_from_gpt(section_title, section_content):
     """
 
     client = OpenAI(
-        api_key=os.environ.get("OPENAI_CAMEL_KEY"),  # This is the default and can be omitted
+        api_key=os.environ.get("OPENAI_CAMEL_KEY"),
     )
 
-    # Call OpenAI GPT-4 API to generate questions
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
+    completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        response_format=Questions,  # Use the Question schema defined above
     )
-    
-    return chat_completion.choices[0].message.content.strip()
+
+    questions = completion.choices[0].message.parsed
+    return questions
 
 def parse_gpt_output(gpt_output, chapter_name, section_title):
     try:
-        # Parse the JSON-like output into a Python object
-        questions = json.loads(gpt_output)
-        
-        # Format the questions into the final structure you want
         formatted_questions = []
         
-        for question in questions:
+        for question in gpt_output.questions:
             formatted_questions.append({
-                'id': len(formatted_questions) + 1,  # Simple ID generation
+                'id': str(uuid.uuid4()),  # Generate a short UUID
                 'chapter': chapter_name,
                 'section': section_title,
-                'type': question['type'],
-                'question': question['question'],
-                'choices': question.get('choices', []),
-                'correct_answers': question.get('correct_answers', []),
-                'starter_code': question.get('starter_code', ''),
-                'test_code': question.get('test_code', ''),
+                'type': question.type,
+                'question': question.question,
+                'choices': question.choices or [],
+                'correct_answers': question.correct_answers or [],
+                'starter_code': question.starter_code or '',
+                'test_code': question.test_code or '',
                 'metadata': {
                     'num_solves': 0,
                     'is_deactivated': False,
@@ -141,34 +169,33 @@ def parse_gpt_output(gpt_output, chapter_name, section_title):
                 }
             })
         
-        # Return the formatted questions as a JSON string
-        return json.dumps(formatted_questions, indent=4)
+        return True, formatted_questions
     
     except Exception as e:
         print(f"Error parsing GPT output: {e}")
-        return None
+        
+        append_to_file(SCRATCH_FILE, gpt_output)
+        return False, []
 
-# Main function to tie everything together
 def main(chapter_name):
     chapter_html = get_chapter_content(chapter_name)
     sections = extract_sections(chapter_html)
     
+    current_questions = read_json_file(CANDIDATE_FILE)
     all_questions = []
     for section in sections:
         print(f"Generating questions for section: {section['title']}")
         gpt_output = generate_questions_from_gpt(section['title'], section['content'])
-        print(f"GPT Output:\n{gpt_output}")
         
-        # Parse and format the GPT output into questions
-        formatted_questions = parse_gpt_output(gpt_output, chapter_name, section['title'])
+        success, questions = parse_gpt_output(gpt_output, chapter_name, section['title'])
+        if success:
+            all_questions.extend(questions)
+            write_json_file(CANDIDATE_FILE, current_questions + all_questions)
+        else:
+            print(f"Failed to compile questions for section: {section['title']}, output saved to scratch.json")
         
-        if formatted_questions:
-            all_questions.append(formatted_questions)
-    
-    # Combine all questions and print the final JSON
-    final_json = "\n".join(all_questions)
-    print(final_json)
+    print("Processing complete.")
 
 if __name__ == '__main__':
-    chapter_name = 'lists-and-patterns'
+    chapter_name = 'error-handling'
     main(chapter_name)

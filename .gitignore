@@ -3,3 +3,5 @@ dist/
 dist-server/
 oldcode/
 camel-tutor-micro-key.pem
+questions/candidate.json
+questions/scratch.json
