@@ -365,7 +365,7 @@ function registerMonacoOcaml(monaco: any) {
 // Function to load the Monaco editor scripts and initialize editors
 async function loadMonacoEditor(): Promise<void> {
     // Initialize the backend server by empty submission
-    submitCode(`let camel_tutor = "Welcome to CamelTutor! :)";;\n`).catch(console.error);
+    submitCode(`let camel_tutor = "Welcome to CamelTutor! :)";;\nopen Base;;\nopen Core;;\n`).catch(console.error);
 
     return new Promise((resolve, reject) => {
 
