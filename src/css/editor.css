@@ -39,18 +39,25 @@
 .run-code-button::after {
     content: "(Cmd + Enter)";
     font-size: 0.8em;
-    color: #007acc;
-    opacity: 0;
+    color: #fff; /* Text color for contrast */
+    background-color: #007acc; /* Background color */
+    padding: 4px 8px; /* Add some space around the text */
+    border-radius: 5px; /* Rounded corners for a tooltip effect */
+    opacity: 0; /* Initially hidden */
     position: absolute;
     top: 50%;
-    left: 105%;
+    left: 105%; /* Adjusted to the right of the button */
     transform: translateY(-50%);
     white-space: nowrap;
-    transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    pointer-events: none; /* Prevent interaction */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+    z-index: 10; /* Ensure it's above other elements */
 }
 
 .run-code-button:hover::after {
-    opacity: 1;
+    opacity: 1; /* Make the tooltip visible on hover */
+    transform: translateY(-50%) translateX(5px); /* Slight animation for better appearance */
 }
 
 .run-code-button .spinner {
@@ -72,6 +79,23 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+.see-tests-button {
+    color: #007acc;
+    background-color: transparent;
+    font-size: 1.1em;
+    padding: 10px 20px;
+    border: 2px solid #007acc;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+
+.see-tests-button:hover {
+    background-color: #007acc;
+    color: #fff;
 }
 
 /* Monaco Editor CSS */

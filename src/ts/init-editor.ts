@@ -2,9 +2,11 @@ import { register } from "module";
 import { extractRunnableCode } from "./extract-ocaml.js";
 import { submitCode } from "./api.js";
 import { initializeQuizzes } from "./init-questions.js";
+import { escape } from "querystring";
 
 interface OutputChecker {
-    (output: string): Promise<[boolean, string]>;
+    checkOutput: (output: string) => Promise<[boolean, string]>;
+    seeTests: () => string;
 }
 
 interface RunCodeResponse {
@@ -28,6 +30,7 @@ export class EditorContainer {
     private editorDiv: any | null;
     private submitButton: HTMLButtonElement | null;
     private editorFocused: boolean;
+    private inspectingTests: boolean;
 
     constructor(containerId: string, initialValue: string, monaco: any, outputChecker: OutputChecker | null = null) {
         this.containerId = containerId;
@@ -37,6 +40,7 @@ export class EditorContainer {
         this.editorDiv = null;
         this.submitButton = null;
         this.editorFocused = false;
+        this.inspectingTests = false;
         this.createEditor(initialValue, monaco);
         this.setupResponsiveBehavior(monaco);
     }
@@ -144,7 +148,42 @@ export class EditorContainer {
         submitButton.innerText = "Run Code";
         submitButton.onclick = () => this.submitCode();
         this.submitButton = submitButton;
-        container.appendChild(submitButton);
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.style.display = "flex";
+        buttonContainer.style.gap = "10px"; // Add some space between buttons
+
+        buttonContainer.appendChild(submitButton);
+        if (this.outputChecker) {
+            const seeTestsButton = document.createElement("button");
+            seeTestsButton.className = "see-tests-button";
+            seeTestsButton.innerText = "See Tests";
+            seeTestsButton.onclick = () => {
+                this.inspectingTests = !this.inspectingTests;
+                if (this.inspectingTests) {
+                    const testCode = this.outputChecker?.seeTests();
+                    const currentValue = this.editor?.getValue() || "";
+                    this.editor?.setValue(currentValue + "\n(* Test cases below: *)\n" + testCode);
+
+                    seeTestsButton.innerText = "Hide Tests";
+                    this.resultElement!.style.display = "block";
+                } else {
+                    // Find the line with "Test cases below" and remove it plus the following lines
+                    const currentValue = this.editor?.getValue() || "";
+                    const lines = currentValue.split("\n");
+                    const testLineIndex: number = lines.findIndex((line: string) => line.includes("Test cases below"));
+                    if (testLineIndex !== -1) {
+                        lines.splice(testLineIndex, lines.length - testLineIndex);
+                        this.editor?.setValue(lines.join("\n"));
+                    }
+                    seeTestsButton.innerText = "See Tests";
+                    this.resultElement!.style.display = "none";
+                }
+            };
+            buttonContainer.appendChild(seeTestsButton);
+        }
+
+        container.appendChild(buttonContainer);
 
         this.resultElement = document.createElement("div");
         this.resultElement.style.display = "none"; // Hide initially
@@ -158,23 +197,26 @@ export class EditorContainer {
             submitButton.innerHTML = 'Running... <span class="spinner"></span>';
             submitButton.classList.add('submitting');
         }
+        const escapeHtml = (str: string) => 
+            str.replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
 
         try {
-            const result: RunCodeResponse = await submitCode(code);
-
-            const escapeHtml = (str: string) => 
-                str.replace(/&/g, "&amp;")
-                   .replace(/</g, "&lt;")
-                   .replace(/>/g, "&gt;");
-    
-            const escapedOutput = escapeHtml(result.output);
-    
-            if (this.outputChecker && this.resultElement) {
-                const [isCorrect, message] = await this.outputChecker(result.output);
+            if (this.outputChecker && this.resultElement && !this.inspectingTests) {
+                const [isCorrect, message] = await this.outputChecker.checkOutput(code);
+                const escapedOutput = escapeHtml(message);
                 this.resultElement.innerHTML = isCorrect
                     ? `<span style="color: green;">Correct:</span><pre style="color: green;">${escapedOutput}</pre>`
                     : `<span style="color: red;">Incorrect:</span><pre style="color: red;">${escapedOutput}</pre>`;
+                
+                this.resultElement.style.display = "block";
+                this.resultElement.innerHTML = `<pre class="result-output">${escapedOutput}</pre>`;
             } else if (this.resultElement) {
+                const result: RunCodeResponse = await submitCode(code);
+        
+                const escapedOutput = escapeHtml(result.output);
+
                 if (escapedOutput.trim()) { // Only show if there is content
                     this.resultElement.style.display = "block";
                     this.resultElement.innerHTML = `<pre class="result-output">${escapedOutput}</pre>`;

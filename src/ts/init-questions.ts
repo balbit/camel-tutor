@@ -136,7 +136,7 @@ function createQuizContainer(props: QuizContainerProps, section: HTMLElement, mo
         editorDiv.id = editorContainerId;
         container.appendChild(editorDiv);
 
-        const outputChecker = async (userCode: string) => {
+        const checkOutput = async (userCode: string) => {
             const testCode = props.question.test_code;
             // Run the test code with the user's code
             const runnableCode = extractRunnableCode(userCode);
@@ -146,6 +146,12 @@ function createQuizContainer(props: QuizContainerProps, section: HTMLElement, mo
             return ret;
         };
 
+        const outputChecker = {
+            checkOutput: checkOutput,
+            seeTests: () => {
+                return props.question.test_code;
+            }
+        }
         const editor = new EditorContainer(editorContainerId, props.question.starter_code, monaco, outputChecker);
     }
 
