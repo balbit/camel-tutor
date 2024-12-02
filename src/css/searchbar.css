@@ -1,0 +1,76 @@
+/* Base styles for Cmd+K search bar */
+#search-bar {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 600px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: Arial, sans-serif;
+}
+
+/* Input styles */
+#search-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+#search-input:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+}
+
+/* Results container */
+#search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1px solid #eee;
+    padding-top: 8px;
+}
+
+/* Individual result */
+.search-result {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+/* Link styles */
+.result-link {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.result-link:hover {
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.result-link strong {
+    font-size: 14px;
+    font-weight: bold;
+    color: #0078d4;
+}
+
+.result-link p {
+    font-size: 12px;
+    margin: 4px 0 0;
+    color: #555;
+}
