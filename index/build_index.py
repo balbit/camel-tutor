@@ -7,7 +7,8 @@ from unicodedata import normalize
 from urllib.parse import urljoin
 import hashlib
 
-BASE_URL = "https://dev.realworldocaml.org/"
+RWO_URL = "https://dev.realworldocaml.org/"
+BASE_URL = "https://camel.elliotliu.com/"
 
 ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789 "
 INDEX = datrie.Trie(ALPHABET)
@@ -17,6 +18,9 @@ paragraph_metadata = {}
 def clean_text(text):
     """Normalize text: lowercase, remove punctuation, and clean whitespace."""
     text = text.lower()
+    text = text.replace('-', ' ')
+    # Remove html tags
+    text = re.sub(r'<[^>]*>', '', text)
     text = re.sub(r'[^\w\s_]', '', text)  # Remove punctuation but keep underscores
     text = normalize('NFKD', text).encode('ascii', 'ignore').decode()  # Remove accents
     text = re.sub(r'\s+', ' ', text).strip()  # Normalize whitespace
@@ -27,10 +31,33 @@ def fetch_and_extract(url):
     response = requests.get(url)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
+    title = soup.title.string if soup.title else 'No title'
     
     elements = []
     for i, element in enumerate(soup.find_all(['h1', 'h2', 'p', 'li'])):
+        parent_sections = element.find_parents('section')
+        section_titles = []
+        for section in parent_sections:
+            section_class = section.get("class", [])
+            heading = None
+            for level in range(1, 5):
+                if f"level{level}" in section_class:
+                    heading = section.find(f'h{level}')
+                    break
+
+            if heading:
+                section_titles.append({
+                    "type": heading.name,
+                    "id": section.get("id", None),  # ID of the section, if present
+                    "text": heading.get_text(strip=False)  # Section title
+                })
+
+        # Reverse to maintain the hierarchy (outermost -> innermost)
+        section_titles.reverse()
+
         elements.append({
+            "title": title,
+            "ancestors": section_titles,
             "type": element.name,
             "id": element.get("id", None),  # Retain IDs for anchors if present
             "order": i,  # Track DOM order
@@ -80,6 +107,8 @@ def build_index(urls):
                 "type": element["type"],
                 "order": element["order"],
                 "id": element.get("id", None),
+                "ancestors": element["ancestors"],
+                "title": element["title"],
                 "raw_text": raw_text,
                 "cleaned_text": cleaned_text
             }

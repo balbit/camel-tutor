@@ -4,11 +4,21 @@ import json
 from datrie import Trie
 import re
 import hashlib
+from unicodedata import normalize
 
 # Load index and metadata
 INDEX = Trie.load("index/index.trie")
 with open("index/paragraph_metadata.json", "r") as f:
     PARAGRAPH_METADATA = json.load(f)
+
+def clean_text(text):
+    """Normalize text: lowercase, remove punctuation, and clean whitespace."""
+    text = text.lower()
+    text = text.replace('-', ' ')
+    text = re.sub(r'[^\w\s_]', '', text)  # Remove punctuation but keep underscores
+    text = normalize('NFKD', text).encode('ascii', 'ignore').decode()  # Remove accents
+    text = re.sub(r'\s+', ' ', text).strip()  # Normalize whitespace
+    return text
 
 async def search_handler(websocket, path):
     """
@@ -17,7 +27,7 @@ async def search_handler(websocket, path):
     print("Client connected")
     try:
         async for message in websocket:
-            query = message.strip().lower()
+            query = clean_text(message.strip())
             if query:
                 results = search_query(query)
                 await websocket.send(json.dumps(results))
