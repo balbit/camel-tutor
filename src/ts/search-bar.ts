@@ -89,15 +89,29 @@ class SearchBar {
             return text.replace(regex, "<strong>$1</strong>");
         };
     
+        const formatAncestors = (ancestors: Array<{ type: string; id: string; text: string }>): string => {
+            const ancestorTitles = ancestors.map((ancestor) => ancestor.text);
+            const fullPath = ancestorTitles.join(" > ");
+            const maxLength = 130;
+    
+            if (fullPath.length > maxLength) {
+                return "..." + fullPath.slice(fullPath.length - maxLength);
+            }
+    
+            return fullPath;
+        };
+    
         results.forEach((result) => {
             const resultDiv = document.createElement("div");
             resultDiv.className = "search-result";
     
             const highlightedSnippet = highlightQuery(result.snippet, query);
+            const ancestorPath = formatAncestors(result.ancestors || []);
     
             resultDiv.innerHTML = `
                 <a href="${result.url}" target="_blank" class="result-link">
                     <strong>${result.title}</strong>
+                    <p style="color: gray; font-size: 0.7em;">${ancestorPath}</p>
                     <p>${highlightedSnippet}</p>
                 </a>
             `;

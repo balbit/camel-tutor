@@ -43,6 +43,8 @@ def search_query(query, top_k=10):
     """
     if query in INDEX:
         paragraph_ids = INDEX[query]
+        # deduplicate paragraph_ids
+        paragraph_ids = list(dict.fromkeys(paragraph_ids))
         results = []
         for paragraph_id in paragraph_ids[:top_k]:
             metadata = PARAGRAPH_METADATA.get(paragraph_id, {})
@@ -69,7 +71,8 @@ def search_query(query, top_k=10):
                 "paragraph_id": paragraph_id,
                 "title": metadata.get("title", "Untitled"),
                 "url": metadata.get("url", ""),
-                "snippet": highlighted_snippet
+                "snippet": highlighted_snippet,
+                "ancestors": metadata.get("ancestors", [])
             })
         return results
     return []
