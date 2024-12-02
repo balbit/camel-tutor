@@ -65,7 +65,7 @@ def fetch_and_extract(url):
         })
     return elements
 
-def generate_word_chunks(text, max_chunk_size=20, max_substring_length=20):
+def generate_word_chunks(text, max_chunk_size=15, max_substring_length=20):
     """
     Break text into overlapping word chunks and substrings for efficient indexing.
     - Chunks up to `max_chunk_size` words.
@@ -156,8 +156,14 @@ def interactive_query():
             print(f"No results found for '{query}'.")
 
 if __name__ == "__main__":
-    urls = ["guided-tour.html"]
-    
+    try:
+        with open("index_pages.json", "r") as f:
+            urls = json.load(f)
+    except FileNotFoundError:
+        print("Error: index_pages.json not found. Run the URL collection script first.")
+        exit(1)
+
+    # Index all URLs
     try:
         load_index()
         print("Index loaded from disk.")
