@@ -7,6 +7,8 @@ SYNC_ASSETS=false
 SYNC_NGINX=false
 SYNC_HTML=false
 SYNC_QUESTIONS=false
+SYNC_SERVER=false
+SYNC_SEARCH=false
 
 # If no parameters are provided, sync everything
 if [ "$#" -eq 0 ]; then
@@ -38,6 +40,9 @@ else
             server)
                 SYNC_SERVER=true
                 ;;
+            search)
+                SYNC_SEARCH=true
+                ;;
             questions)
                 SYNC_QUESTIONS=true
                 ;;
@@ -46,7 +51,7 @@ else
                 ;;
             *)
                 echo "Invalid option: $arg"
-                echo "Usage: $0 [ts] [css] [assets] [nginx] [html] [server]"
+                echo "Usage: $0 [ts] [css] [assets] [nginx] [html] [server] [questions] [search]"
                 exit 1
                 ;;
         esac
@@ -98,6 +103,27 @@ if [ "$SYNC_SERVER" = true ]; then
 
     echo "Restarting server on EC2..."
     ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "pm2 restart camel-tutor || pm2 start /home/ubuntu/server/server.js --name camel-tutor"
+fi
+
+if [ "$SYNC_SEARCH" = true ]; then
+    echo "Ensuring Python server directory exists on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "mkdir -p /home/ubuntu/python-server/ && mkdir -p /home/ubuntu/python-server/index/"
+
+    echo "Syncing Python server files to EC2..."
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" src/python-server/ ubuntu@3.128.118.239:/home/ubuntu/python-server/
+    rsync -avz -e "ssh -i camel-tutor-micro-key.pem" index/ ubuntu@3.128.118.239:/home/ubuntu/python-server/index/
+
+    echo "Installing Python dependencies on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "cd /home/ubuntu/python-server && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt"
+
+    echo "Restarting Python server on EC2..."
+    ssh -i camel-tutor-micro-key.pem ubuntu@3.128.118.239 "
+        cd /home/ubuntu/python-server &&
+        source venv/bin/activate &&
+        pm2 restart python-server || pm2 start python3 --name python-server -- python-server.py
+    "
+
+    echo "Python server restarted successfully."
 fi
 
 # Sync NGINX configuration to EC2 and restart NGINX if SYNC_NGINX is true
