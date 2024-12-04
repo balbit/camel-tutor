@@ -48,8 +48,16 @@ function findRandomQuestion(questions: Question[], sectionId: string): Question 
     if (filteredQuestions.length === 0) {
         return null;
     }
-    const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
-    return filteredQuestions[randomIndex];
+
+    const programmingQuestions = filteredQuestions.filter((question) => question.type === "programming");
+    const nonProgrammingQuestions = filteredQuestions.filter((question) => question.type !== "programming");
+
+    const randomIndex = Math.random();
+    if (randomIndex < 0.7 && programmingQuestions.length > 0) {
+        return programmingQuestions[Math.floor(Math.random() * programmingQuestions.length)];
+    } else {
+        return filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
+    }
 }
 
 function createQuizContainer(props: QuizContainerProps, section: HTMLElement, monaco: any): HTMLElement {

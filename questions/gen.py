@@ -50,6 +50,7 @@ def extract_sections(chapter_html):
     
     return sections
 
+
 class Question(BaseModel):
     type: str
     question: str
@@ -57,6 +58,8 @@ class Question(BaseModel):
     correct_answers: Optional[List[int]]
     starter_code: Optional[str]
     test_code: Optional[str]
+    hint: Optional[str]
+    explanation: Optional[str]
     section: str
     chapter: str
 
@@ -68,16 +71,24 @@ def generate_questions_from_gpt(section_title, section_content):
     prompt = f"""
     You are an AI tasked with creating difficult and interesting questions from technical content.
 
-    Context:
+    **Context:**
     - The content comes from the Real World OCaml textbook.
     - The language is OCaml (specifically Jane Street's version with the Base library).
-    - For the programming questions, please include both the problem and testing code that verifies the solution.
+    - For programming questions:
+        - Include a clear problem statement.
+        - Provide a **hint** to specify the problem strictly enough so it can be solved.
+        - The code, including the tests, will be run in a utop session, so write code accordingly.
+        - Instead of test cases using `assert`, provide sample code that runs the function on diverse inputs, with expected outputs in comments, so the user can visually inspect and check it.
+        - Don't forget that Ocaml comments are denoted by `(* comment *)`.
+        - Ensure all code follows Jane Street's Base/Core usage.
 
-    Instructions:
+    **Instructions:**
     1. Analyze the section content provided.
     2. Highlight 3-5 interesting/challenging parts of the section that could be turned into questions.
-    3. Generate 1-2 multiple choice questions (MCQ) based on these interesting parts.
-    4. Generate 1-2 difficult programming problems that require implementation, especially challenging algorithms or complex functions. Make sure to include verification code that checks if the implementation is correct.
+    3. Generate 1-2 multiple-choice questions (MCQs) based on these interesting parts.
+    4. Generate 1 difficult programming problem that require implementation, especially challenging algorithms or complex functions. Ensure the problems are well-specified.
+    5. Make sure to include a **hint** for the programming question to guide the user, and specify any underspecified or ambiguous parts.
+    6. Add an **explanation** field after each question to provide an explanation for the answer and suggest other interesting things to look into.
 
     Example of MCQ:
     Question: What does the function `List.fold_left` do in OCaml?
@@ -96,40 +107,14 @@ def generate_questions_from_gpt(section_title, section_content):
     ```
     Test Code:
     ```ocaml
-    let () = 
-        assert (sum [1;2;3] = 6);
-        assert (sum [-1; 0; 1] = 0)
+    let list1 = sum [1; 2; 3];; (* should return 6 *)
+    let list2 = sum [10; -20; 30];; (* should return 20 *)
     ```
 
-    Output:
-    Return the questions in the following structured JSON format:
-    [
-        {{
-            "type": "multiple_choice",  # or "programming"
-            "question": "What does the function `List.fold_left` do in OCaml?",
-            "choices": ["Accumulates values from left to right", "Accumulates values from right to left", "Creates a new list", "Finds the maximum element"],
-            "correct_answers": [0],  # Indices of correct answers
-            "starter_code": "",
-            "test_code": "",
-            "section": "Exception Handling",
-            "chapter": "Error Handling"
-        }},
-        {{
-            "type": "programming",
-            "question": "Implement a function to calculate the sum of a list of integers in OCaml.",
-            "starter_code": "let sum lst = (* your code here *)",
-            "test_code": \"\"\"
-                let () = 
-                    assert (sum [1; 2; 3] = 6);
-                    assert (sum [-1; 0; 1] = 0)
-            \"\"\",
-            "section": "Exception Handling",
-            "chapter": "Error Handling"
-        }}
-    ]
-    
     Section Title: {section_title}
     Section Content: {section_content}
+
+    The "type" field is either "programming" or "multiple_choice".
     """
 
     client = OpenAI(
@@ -162,6 +147,8 @@ def parse_gpt_output(gpt_output, chapter_name, section_title):
                 'correct_answers': question.correct_answers or [],
                 'starter_code': question.starter_code or '',
                 'test_code': question.test_code or '',
+                'hint': question.hint or '',
+                'explanation': question.explanation or '',
                 'metadata': {
                     'num_solves': 0,
                     'is_deactivated': False,
@@ -197,5 +184,5 @@ def main(chapter_name):
     print("Processing complete.")
 
 if __name__ == '__main__':
-    chapter_name = 'error-handling'
+    chapter_name = 'imperative-programming'
     main(chapter_name)
