@@ -1,43 +1,90 @@
-/* About page styling */
+/* About page container styling */
 #about-page {
     width: 100%;
     max-width: 800px;
     margin: 50px auto;
     padding: 40px;
-    background-color: #fdf6e3; /* Soft background color */
+    background-color: #fdf6e3; /* Clean white background */
     color: #333;
     text-align: center;
-    font-family: Arial, sans-serif;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
+    font-family: 'Roboto', sans-serif; /* Modern font */
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Subtle, elegant shadow */
+    border-radius: 12px; /* Slightly softer border */
+    border: 1px solid #e0e0e0; /* Thin, neutral border */
 }
 
 /* Title styling */
 #about-page h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    font-size: 3em; /* Larger, impactful title */
+    font-weight: 700; /* Bold title */
+    margin-bottom: 25px;
+    color: #2a5d9f; /* Professional blue tone */
 }
 
 /* Paragraph styling */
 #about-page p {
-    font-size: 1.2em;
+    font-size: 1.15em; /* Balanced font size */
     margin-bottom: 20px;
-    line-height: 1.6;
+    line-height: 1.8; /* Easier readability */
+    color: #444; /* Slightly softer text color */
+}
+
+/* List styling */
+#about-page ul {
+    text-align: left; /* Align lists for better readability */
+    margin: 20px auto;
+    padding: 0;
+    list-style: none; /* Remove default list styling */
+}
+
+#about-page ul li {
+    font-size: 1.15em;
+    margin-bottom: 15px;
+    padding-left: 30px;
+    position: relative;
+    line-height: 1.8;
+    color: #555; /* Neutral color for list text */
+}
+
+#about-page ul li::before {
+    content: '•'; /* Custom bullet point */
+    position: absolute;
+    left: 0;
+    color: #2a5d9f; /* Accent color for bullets */
+    font-size: 1.5em;
 }
 
 /* Link styling */
 .external-link {
     display: inline-block;
-    color: #007acc;
+    color: #2a5d9f; /* Accent color */
     font-size: 1.1em;
+    font-weight: 500;
     text-decoration: none;
-    padding: 10px 15px;
-    border: 2px solid #007acc;
-    border-radius: 5px;
-    transition: background-color 0.2s ease-in-out;
+    padding: 12px 18px;
+    border: 2px solid #2a5d9f; /* Matching border */
+    border-radius: 6px; /* Slightly softer button shape */
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
 }
 
 .external-link:hover {
-    background-color: #007acc;
-    color: #fff;
+    background-color: #2a5d9f;
+    color: #fff; /* Invert colors on hover */
+    transform: scale(1.05); /* Slight scale-up effect */
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    #about-page {
+        padding: 30px;
+    }
+
+    #about-page h1 {
+        font-size: 2.5em;
+    }
+
+    #about-page p,
+    #about-page ul li {
+        font-size: 1em;
+    }
 }
