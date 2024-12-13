@@ -3,6 +3,7 @@ import { extractRunnableCode } from "./extract-ocaml.js";
 import { submitCode } from "./api.js";
 import { initializeQuizzes } from "./init-questions.js";
 import { escape } from "querystring";
+import { scrollToHash } from "./scroll-helper.js";
 
 interface OutputChecker {
     checkOutput: (output: string) => Promise<[boolean, string]>;
@@ -427,4 +428,6 @@ document.addEventListener("DOMContentLoaded", async() => {
     // Load back the Prism.js and Modernizr scripts we disabled
     await loadScript('js/prism.js');
     await loadScript('js/min/modernizr-min.js');
+
+    scrollToHash();
 });
