@@ -38,6 +38,23 @@ async def search_handler(websocket, path):
     except websockets.ConnectionClosed:
         print("Client disconnected")
 
+
+def normalize_text(text):
+    text = text.lower()
+    text = re.sub(r'[^a-z0-9\s]', '', text)
+    text = text.strip()
+    text = re.sub(r'\s+', ' ', text)
+    words = text.split()
+    words = words[:6]
+    return '-'.join(words)
+
+def get_element_url(metadata):
+    tag = metadata.get("type", "").lower()
+    text_content = metadata.get("raw_text", "")
+    normalized_text = normalize_text(text_content)
+    base_url = metadata.get("url", "")
+    return base_url + "#" + "-".join([tag, normalized_text])
+
 def search_query(query, offset=0, top_k=10):
     """
     Perform a search query on the trie and return top K results, starting at the given offset.
@@ -70,7 +87,7 @@ def search_query(query, offset=0, top_k=10):
             results.append({
                 "paragraph_id": paragraph_id,
                 "title": metadata.get("title", "Untitled"),
-                "url": metadata.get("url", ""),
+                "url": get_element_url(metadata),
                 "snippet": highlighted_snippet,
                 "ancestors": metadata.get("ancestors", [])
             })

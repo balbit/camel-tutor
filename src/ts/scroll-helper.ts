@@ -62,7 +62,6 @@ function injectAnchorLinks(): void {
                 scrollToHash(); // Manually scroll to the element
             });
 
-            // Ensure the parent element has `position: relative` for correct anchor positioning
             element.style.position = "relative";
             element.appendChild(anchor);
         }
